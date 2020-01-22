@@ -22,12 +22,7 @@ struct Window
 		hdc = GetDC(handle);
 	}
 
-	void process_messages()
-	{
-
-	}
-
-	void draw(Render_State& surface)
+	void render_bitmap(Render_State& surface)
 	{
 		StretchDIBits(hdc, 0, 0, surface.width, surface.height, 0, 0, surface.width, surface.height, surface.memory, &surface.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 	}
