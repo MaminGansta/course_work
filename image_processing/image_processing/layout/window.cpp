@@ -18,6 +18,7 @@ struct Window
 		window_class.style = CS_HREDRAW | CS_VREDRAW;
 		window_class.lpszClassName = L"window";
 		window_class.lpfnWndProc = callback;
+		window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
 		RegisterClass(&window_class);
 		handle = CreateWindow(window_class.lpszClassName, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, 0, hInstance, 0);
 		hdc = GetDC(handle);

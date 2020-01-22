@@ -19,10 +19,15 @@ struct Image
 		
 		data = new Color[width * height];
 		
-		int j = 1;
-		int size = width * height;
-		for (int i = 0; i < chanels * width * height; i += chanels)
-			data[size - j++] = Color(raw[i], raw[i + 1], raw[i + 2]);
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				int pos = (y * width + x) * chanels;
+				data[(height - y - 1) * width + x] = Color(raw[pos], raw[pos + 1], raw[pos +2]);
+			}
+		}
+
 
 		stbi_image_free(raw);
 	}

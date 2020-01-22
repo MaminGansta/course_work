@@ -1,5 +1,6 @@
 
 
+// globals to chat between callback function
 Window* window_ptr;
 Render_State* main_surface_ptr;
 Image* image_ptr;
@@ -26,8 +27,10 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	{
 		PAINTSTRUCT decoy;
 		BeginPaint(window_ptr->handle, &decoy);
+
 		draw_image(*main_surface_ptr, *image_ptr, 0, 0, main_surface_ptr->width, main_surface_ptr->height);
 		window_ptr->render_bitmap(*main_surface_ptr);
+
 		EndPaint(window_ptr->handle, &decoy);
 	}break;
 	default:

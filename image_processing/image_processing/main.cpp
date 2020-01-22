@@ -11,14 +11,11 @@ bool running = true;
 #include "stb_image.h"
 
 
-
-
 // unity build
-#include "render_stuff.cpp"
-
 #include "thread_pool.cpp"
 thread_pool workers(2);
 
+#include "render_stuff.cpp"
 #include "window.cpp"
 #include "image.cpp"
 #include "input.cpp"
@@ -29,12 +26,11 @@ thread_pool workers(2);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-
 	Render_State main_surface;
 	main_surface_ptr = &main_surface;
 
-	Window window(L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance);
-	window_ptr = &window;
+	Window main_window(L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance);
+	window_ptr = &main_window;
 
 
 	Image japan("images/japan.jpg");
@@ -46,22 +42,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Timer timer(true);
 
 
-	Button button(L"button", window.handle, 0);
+	Button button(L"gist", main_window.handle, 0);
 
 
 	while (running)
 	{
 
 		// massage handler
-		main_process_msg(window, main_surface, keys, mouse);
+		main_process_msg(main_window, main_surface, keys, mouse);
 		
 
 		// work space
 		draw_image(main_surface, japan, 0, 0, main_surface.width, main_surface.height);
 
-
-		// generate WM_PAINT massage
-		UpdateWindow(button.handle);
 
 		//timer
 		timer.update();
