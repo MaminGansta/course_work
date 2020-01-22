@@ -42,6 +42,18 @@ struct Image
 		return data[y * width + x];
 	}
 
+	Color get_pixel_scaled_back_white(int x, int y, int screen_w, int screen_h)
+	{
+		y = y * height / screen_h;
+		x = x * width / screen_w;
+
+		assert(((uint32_t)y < height) | ((uint32_t)x < width));
+
+		Color color = data[y * width + x];
+		uint8_t b_w = 255 * (color.r + color.g + color.b) / (255 * 3);
+		return Color(b_w);
+	}
+
 	~Image() { delete[] data; }
 };
 
@@ -63,7 +75,9 @@ void draw_image(Render_State& surface, Image& image,
 		{
 			for (int y = pos_y; y < height; y++)
 				for (int x = from_x; x < to_x; x++)
+				{
 					surface.memory[y * surface.width + x] = image.get_pixel_scaled(x, y, width, height);
+				}
 		});
 	}
 

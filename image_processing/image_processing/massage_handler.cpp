@@ -1,5 +1,9 @@
 
 
+Window* window_ptr;
+Render_State* main_surface_ptr;
+Image* image_ptr;
+
 // main window callback from os
 LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -11,12 +15,20 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	{
 		RECT rect;
 		GetClientRect(hwnd, &rect);
-		main_surface.resize(rect.right - rect.left, rect.bottom - rect.top);
+		main_surface_ptr->resize(rect.right - rect.left, rect.bottom - rect.top);
 	} break;
 	case WM_DESTROY:
 	case WM_CLOSE:
 	{
 		running = false;
+	}break;
+	case WM_PAINT:
+	{
+		PAINTSTRUCT decoy;
+		BeginPaint(window_ptr->handle, &decoy);
+		draw_image(*main_surface_ptr, *image_ptr, 0, 0, main_surface_ptr->width, main_surface_ptr->height);
+		window_ptr->render_bitmap(*main_surface_ptr);
+		EndPaint(window_ptr->handle, &decoy);
 	}break;
 	default:
 	{
@@ -27,10 +39,10 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 }
 
 // main window massage handle, called from game loop
-void main_process_msg(const HWND& window, Key_Input& keys, Mouse_Input& mouse)
+void main_process_msg(Window& window, Render_State& surface, Key_Input& keys, Mouse_Input& mouse)
 {
 	MSG msg;
-	while (PeekMessage(&msg, window, 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, window.handle, 0, 0, PM_REMOVE))
 	{
 		switch (msg.message)
 		{
@@ -38,8 +50,8 @@ void main_process_msg(const HWND& window, Key_Input& keys, Mouse_Input& mouse)
 		{
 			int x = LOWORD(msg.lParam);
 			int y = HIWORD(msg.lParam);
-			mouse.pos_x = float(x - main_surface.width / 2) / main_surface.height;
-			mouse.pos_y = float(main_surface.height - y - main_surface.height / 2) / main_surface.height;
+			mouse.pos_x = float(x - surface.width / 2) / surface.height;
+			mouse.pos_y = float(surface.height - y - surface.height / 2) / surface.height;
 		}break;
 		case WM_LBUTTONDOWN:
 		{
@@ -59,30 +71,30 @@ void main_process_msg(const HWND& window, Key_Input& keys, Mouse_Input& mouse)
 
 			switch (vk_code)
 			{
-			case VK_LEFT:
-			{
-				keys.buttons[BUTTON_LEFT].changed = keys.buttons[BUTTON_LEFT].is_down ^ is_down;
-				keys.buttons[BUTTON_LEFT].is_down = is_down;
-			}break;
-			case VK_RIGHT:
-			{
-				keys.buttons[BUTTON_RIGHT].changed = keys.buttons[BUTTON_RIGHT].is_down ^ is_down;
-				keys.buttons[BUTTON_RIGHT].is_down = is_down;
-			}break;
-			case VK_UP:
-			{
-				keys.buttons[BUTTON_UP].changed = keys.buttons[BUTTON_UP].is_down ^ is_down;
-				keys.buttons[BUTTON_UP].is_down = is_down;
-			}break;
-			case VK_DOWN:
-			{
-				keys.buttons[BUTTON_DOWN].changed = keys.buttons[BUTTON_DOWN].is_down ^ is_down;
-				keys.buttons[BUTTON_DOWN].is_down = is_down;
-			}break;
-			case VK_ESCAPE:
-			{
-				running = false;
-			}break;
+				case VK_LEFT:
+				{
+					keys.buttons[BUTTON_LEFT].changed = keys.buttons[BUTTON_LEFT].is_down ^ is_down;
+					keys.buttons[BUTTON_LEFT].is_down = is_down;
+				}break;
+				case VK_RIGHT:
+				{
+					keys.buttons[BUTTON_RIGHT].changed = keys.buttons[BUTTON_RIGHT].is_down ^ is_down;
+					keys.buttons[BUTTON_RIGHT].is_down = is_down;
+				}break;
+				case VK_UP:
+				{
+					keys.buttons[BUTTON_UP].changed = keys.buttons[BUTTON_UP].is_down ^ is_down;
+					keys.buttons[BUTTON_UP].is_down = is_down;
+				}break;
+				case VK_DOWN:
+				{
+					keys.buttons[BUTTON_DOWN].changed = keys.buttons[BUTTON_DOWN].is_down ^ is_down;
+					keys.buttons[BUTTON_DOWN].is_down = is_down;
+				}break;
+				case VK_ESCAPE:
+				{
+					running = false;
+				}break;
 			}
 		}break;
 		default:
