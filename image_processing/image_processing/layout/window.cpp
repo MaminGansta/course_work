@@ -5,6 +5,7 @@ struct Window
 	HDC hdc;
 
 	Window(
+		const WCHAR* class_name,
 		const WCHAR* window_name,
 		int width,
 		int height,
@@ -14,13 +15,28 @@ struct Window
 		HWND parent = NULL
 	)
 	{
-		WNDCLASS window_class = {};
-		window_class.style = CS_HREDRAW | CS_VREDRAW;
-		window_class.lpszClassName = L"window";
-		window_class.lpfnWndProc = callback;
-		window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
-		RegisterClass(&window_class);
-		handle = CreateWindow(window_class.lpszClassName, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, 0, hInstance, 0);
+		WNDCLASSEX wc;
+		wc.cbSize = sizeof(wc);
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpfnWndProc = callback;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = 0;
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+		wc.lpszMenuName = NULL;
+		wc.lpszClassName = class_name;
+		//  wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
+		wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+		if (!RegisterClassEx(&wc)) {
+			MessageBox(NULL, L"Cannot register class", L"Error", MB_OK);
+			assert(false);
+		}
+
+		handle = CreateWindow(class_name, window_name, style, 0, 0, width, height, (HWND)NULL, (HMENU)NULL,(HINSTANCE)hInstance, NULL);
+		
 		hdc = GetDC(handle);
 	}
 
@@ -44,7 +60,7 @@ struct Button
 		int y = 10,
 		int width = 100,
 		int height = 20,
-		UINT style = WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON
+		UINT style = WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_PUSHBUTTON
 	)
 	{
 		handle = CreateWindow(
@@ -56,7 +72,7 @@ struct Button
 			width,     // Button width
 			height,    // Button height
 			parent,    // Parent window
-			NULL, // menu.
+			(HMENU)id, // menu.
 			(HINSTANCE)GetWindowLong(parent, GWL_HINSTANCE),
 			NULL);      // Pointer not needed.
 	}

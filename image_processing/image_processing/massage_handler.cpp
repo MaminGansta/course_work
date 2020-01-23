@@ -11,34 +11,39 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	LRESULT res = 0;
 	switch (uMsg)
 	{
-	case WM_CREATE:
-	case WM_SIZE:
-	{
-		RECT rect;
-		GetClientRect(hwnd, &rect);
-		main_surface_ptr->resize(rect.right - rect.left, rect.bottom - rect.top);
-	} break;
-	case WM_DESTROY:
-	case WM_CLOSE:
-	{
-		running = false;
-	}break;
-	case WM_PAINT:
-	{
-		PAINTSTRUCT decoy;
-		BeginPaint(window_ptr->handle, &decoy);
-
-		draw_image(*main_surface_ptr, *image_ptr, 0, 0, main_surface_ptr->width, main_surface_ptr->height);
-		window_ptr->render_bitmap(*main_surface_ptr);
-
-		EndPaint(window_ptr->handle, &decoy);
-	}break;
-	default:
-	{
-		res = DefWindowProc(hwnd, uMsg, wParam, lParam);
+		case WM_COMMAND:
+		{
+				OutputDebugStringA("asdfasdf");
+		}break;
+	
+		case WM_CREATE:
+		case WM_SIZE:
+		{
+			RECT rect;
+			GetClientRect(hwnd, &rect);
+			main_surface_ptr->resize(rect.right - rect.left, rect.bottom - rect.top);
+		} break;
+		case WM_DESTROY:
+		case WM_CLOSE:
+		{
+			running = false;
+		}break;
+		case WM_PAINT:
+		{
+			PAINTSTRUCT decoy;
+			BeginPaint(window_ptr->handle, &decoy);
+		
+			draw_image(*main_surface_ptr, *image_ptr, 0, 0, main_surface_ptr->width, main_surface_ptr->height);
+			window_ptr->render_bitmap(*main_surface_ptr);
+		
+			EndPaint(window_ptr->handle, &decoy);
+		}break;
+		default:
+		{
+			res = DefWindowProc(hwnd, uMsg, wParam, lParam);
+		}
 	}
 	return res;
-	}
 }
 
 // main window massage handle, called from game loop
@@ -47,8 +52,10 @@ void main_process_msg(Window& window, Render_State& surface, Key_Input& keys, Mo
 	MSG msg;
 	while (PeekMessage(&msg, window.handle, 0, 0, PM_REMOVE))
 	{
+
 		switch (msg.message)
 		{
+
 		case WM_MOUSEMOVE:
 		{
 			int x = LOWORD(msg.lParam);
@@ -100,11 +107,9 @@ void main_process_msg(Window& window, Render_State& surface, Key_Input& keys, Mo
 				}break;
 			}
 		}break;
-		default:
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
 		}
-		}
+		
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
 }
