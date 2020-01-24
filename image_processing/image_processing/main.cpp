@@ -3,6 +3,11 @@
 #include <cstdint>
 #include <cstdio>
 
+#include <unordered_map>
+#include <map>
+#include <vector>
+#include <algorithm>
+
 // global variables
 bool running = true;
 
@@ -15,44 +20,49 @@ bool running = true;
 #include "thread_pool.cpp"
 thread_pool workers(2);
 
-#include "render_stuff.cpp"
+// laoyt
+#include "canvas.cpp"
 #include "window.cpp"
 #include "image.cpp"
 #include "input.cpp"
-#include "massage_handler.cpp"
 #include "timer.cpp"
 
+// massage
+#include "histogram_msg.cpp"
+#include "main_win_msg.cpp"
+
+// work stuff
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	Render_State main_surface;
-	main_surface_ptr = &main_surface;
-
-	Window main_window(L"main_window", L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance);
-	window_ptr = &main_window;
-    
+	Key_Input keys;
+	Mouse_Input mouse;
+	Timer timer(true);
 
 	Image japan("images/japan.jpg");
 	if (japan.invalid) return 2;
 	image_ptr = &japan;
 
-	Key_Input keys;
-	Mouse_Input mouse;
-	Timer timer(true);
-
-	Button button(L"gist", main_window.handle, 0);
+	// main window
+	Window* main_window = new Window(L"main_window", L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance, NULL, &main_window_ptr);
+	Button button(L"histogram", main_window->handle, BUTTON_HIST);
 
 	while (running)
 	{
 		// processs massages
-		main_process_msg(main_window, main_surface, keys, mouse);
-		
+		//main_process_msg(main_window, keys, mouse);
+		//if (hist_window_ptr) hist_window_ptr->basic_msg_proc();
 
-
+		MSG msg;
+		while (GetMessage(&msg, NULL, NULL, NULL))
+		{
+			if (!running) break;
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 
 		// work space
-		draw_image(main_surface, japan, 0, 0, main_surface.width, main_surface.height);
 
 
 		//timer

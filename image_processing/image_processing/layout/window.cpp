@@ -1,8 +1,15 @@
 
+#define DEF_STYLE (WS_OVERLAPPEDWINDOW | WS_VISIBLE)
+
 struct Window
 {
+	static std::vector<std::wstring> registred_classes;
+	static std::unordered_map<int, HWND> handles;
+
 	HWND handle;
+	int id;
 	HDC hdc;
+	Canvas canvas;
 
 	Window(
 		const WCHAR* class_name,
@@ -11,10 +18,13 @@ struct Window
 		int height,
 		UINT style,
 		LRESULT(CALLBACK* callback)(HWND, UINT, WPARAM, LPARAM),
-		HINSTANCE& hInstance,
-		HWND parent = NULL
+		HINSTANCE hInstance,
+		HWND parent = NULL,
+		Window** window_ptr = NULL,
+		int id = 0
 	)
 	{
+		if (window_ptr) *window_ptr = this;
 		WNDCLASSEX wc;
 		wc.cbSize = sizeof(wc);
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -30,23 +40,44 @@ struct Window
 		//  wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
 		wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
-		if (!RegisterClassEx(&wc)) {
-			MessageBox(NULL, L"Cannot register class", L"Error", MB_OK);
-			assert(false);
+		std::wstring wClass_name(class_name);
+		if (std::find(registred_classes.begin(), registred_classes.end(), wClass_name) == registred_classes.end())
+		{
+			if (!RegisterClassEx(&wc))
+			{
+				MessageBox(NULL, L"Cannot register class", L"Error", MB_OK);
+				assert(false);
+			}
+			registred_classes.push_back(std::move(wClass_name));
 		}
 
-		handle = CreateWindow(class_name, window_name, style, 0, 0, width, height, (HWND)NULL, (HMENU)NULL,(HINSTANCE)hInstance, NULL);
-		
+		handle = CreateWindow(class_name, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, (HMENU)id,(HINSTANCE)hInstance, NULL);
 		hdc = GetDC(handle);
 	}
 
-	~Window() { DestroyWindow(handle); }
+	~Window()
+	{ 
+		DestroyWindow(handle);
+	}
 
-	void render_bitmap(Render_State& surface)
+	void render_canvas(Canvas& surface)
 	{
 		StretchDIBits(hdc, 0, 0, surface.width, surface.height, 0, 0, surface.width, surface.height, surface.memory, &surface.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 	}
+
+	void basic_msg_proc()
+	{
+		MSG msg;
+		while (PeekMessage(&msg, handle, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
 };
+
+std::vector<std::wstring> Window::registred_classes = std::vector<std::wstring>();
+
 
 struct Button
 {

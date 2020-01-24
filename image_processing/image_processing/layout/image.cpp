@@ -28,7 +28,6 @@ struct Image
 			}
 		}
 
-
 		stbi_image_free(raw);
 	}
 
@@ -63,7 +62,7 @@ struct Image
 };
 
 
-void draw_image(Render_State& surface, Image& image,
+void draw_image(Canvas& surface, Image& image,
 				int pos_x, int pos_y, int width, int height)
 {
 	width = min(width, surface.width - pos_x);

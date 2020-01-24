@@ -20,14 +20,15 @@ struct Color
 };
 
 
-struct Render_State {
+struct Canvas
+{
 	int height, width;
 	int whole_size;
 	Color* memory;
 
 	BITMAPINFO bitmap_info;
 
-	~Render_State() { VirtualFree(memory, 0, MEM_RELEASE); }
+	~Canvas() { VirtualFree(memory, 0, MEM_RELEASE); }
 
 	void resize(int new_width, int new_height)
 	{

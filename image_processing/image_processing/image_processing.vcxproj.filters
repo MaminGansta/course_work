@@ -24,7 +24,10 @@
     <ClCompile Include="layout\image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="massage_handler.cpp">
+    <ClCompile Include="massage_handlers\main_win_msg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="massage_handlers\histogram_msg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
