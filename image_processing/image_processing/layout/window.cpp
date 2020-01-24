@@ -1,15 +1,25 @@
 
 #define DEF_STYLE (WS_OVERLAPPEDWINDOW | WS_VISIBLE)
 
+
+struct HWND_constainer
+{
+
+};
+
+
 struct Window
 {
 	static std::vector<std::wstring> registred_classes;
-	static std::unordered_map<int, HWND> handles;
+	static int gen_id;
+	//static std::map<int, HWND> handles;
+	static std::vector<std::pair<int, HWND>> handles;
 
-	HWND handle;
-	int id;
+	int class_id;
 	HDC hdc;
 	Canvas canvas;
+
+
 
 	Window(
 		const WCHAR* class_name,
@@ -51,13 +61,19 @@ struct Window
 			registred_classes.push_back(std::move(wClass_name));
 		}
 
-		handle = CreateWindow(class_name, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, (HMENU)id,(HINSTANCE)hInstance, NULL);
+		class_id = gen_id++;
+		//handles[class_id] = CreateWindow(class_name, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, (HMENU)id,(HINSTANCE)hInstance, NULL);
+		HWND handle = CreateWindow(class_name, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, (HMENU)id, (HINSTANCE)hInstance, NULL);
+		handles.push_back(std::make_pair(class_id, handle));
 		hdc = GetDC(handle);
 	}
 
 	~Window()
-	{ 
-		DestroyWindow(handle);
+	{
+		int id = class_id;
+		auto el = std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; });
+		DestroyWindow(el->second);
+		handles.erase(el);
 	}
 
 	void render_canvas(Canvas& surface)
@@ -65,18 +81,27 @@ struct Window
 		StretchDIBits(hdc, 0, 0, surface.width, surface.height, 0, 0, surface.width, surface.height, surface.memory, &surface.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 	}
 
-	void basic_msg_proc()
+	HWND getHWND() { int id = class_id;  return std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; })->second; }//handles[class_id]; }
+
+	static void default_msg_proc()
 	{
-		MSG msg;
-		while (PeekMessage(&msg, handle, 0, 0, PM_REMOVE))
+		for (auto handle : handles)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			MSG msg;
+			while (PeekMessage(&msg, handle.second, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 	}
 };
 
 std::vector<std::wstring> Window::registred_classes = std::vector<std::wstring>();
+int Window::gen_id = 0;
+//std::map<int, HWND> Window::handles = std::map<int, HWND>();
+std::vector<std::pair<int, HWND>> Window::handles = std::vector<std::pair<int, HWND>>();
+
 
 
 struct Button

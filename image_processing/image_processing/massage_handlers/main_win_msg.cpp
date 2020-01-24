@@ -15,7 +15,7 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case WM_COMMAND:
 		{
 			if (LOWORD(wParam) == BUTTON_HIST && hist_window_ptr == nullptr)
-				hist_window_ptr = new Window(L"hist", L"histogram", 600, 400, DEF_STYLE, hist_callback, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), main_window_ptr->handle, &hist_window_ptr);
+				hist_window_ptr = new Window(L"hist", L"histogram", 600, 400, DEF_STYLE, hist_callback, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), hwnd, &hist_window_ptr);
 		
 		}break;
 	
@@ -34,12 +34,12 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case WM_PAINT:
 		{
 			PAINTSTRUCT decoy;
-			BeginPaint(main_window_ptr->handle, &decoy);
+			BeginPaint(hwnd, &decoy);
 		
 			draw_image(main_window_ptr->canvas, *image_ptr, 0, 0, main_window_ptr->canvas.width, main_window_ptr->canvas.height);
 			main_window_ptr->render_canvas(main_window_ptr->canvas);
 		
-			EndPaint(main_window_ptr->handle, &decoy);
+			EndPaint(hwnd, &decoy);
 		}break;
 		default:
 		{
@@ -55,7 +55,7 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 void main_process_msg(Window& window, Key_Input& keys, Mouse_Input& mouse)
 {
 	MSG msg;
-	while (PeekMessage(&msg, window.handle, 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, window.getHWND(), 0, 0, PM_REMOVE))
 	{
 
 		switch (msg.message)

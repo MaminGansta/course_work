@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <mutex>
 
 // global variables
 bool running = true;
@@ -27,7 +28,7 @@ thread_pool workers(2);
 #include "input.cpp"
 #include "timer.cpp"
 
-// massage
+// massage callback
 #include "histogram_msg.cpp"
 #include "main_win_msg.cpp"
 
@@ -45,22 +46,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	image_ptr = &japan;
 
 	// main window
-	Window* main_window = new Window(L"main_window", L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance, NULL, &main_window_ptr);
-	Button button(L"histogram", main_window->handle, BUTTON_HIST);
+	Window main_window(L"main_window", L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance, NULL, &main_window_ptr);
+	Button button(L"histogram", main_window.getHWND(), BUTTON_HIST);
 
 	while (running)
 	{
 		// processs massages
-		//main_process_msg(main_window, keys, mouse);
-		//if (hist_window_ptr) hist_window_ptr->basic_msg_proc();
+		main_process_msg(main_window, keys, mouse);
 
-		MSG msg;
-		while (GetMessage(&msg, NULL, NULL, NULL))
-		{
-			if (!running) break;
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+		Window::default_msg_proc();
+
+		//MSG msg;
+		//while (GetMessage(&msg, NULL, NULL, NULL))
+		//{
+		//	if (!running) break;
+		//	TranslateMessage(&msg);
+		//	DispatchMessage(&msg);
+		//}
 
 		// work space
 
