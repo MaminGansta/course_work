@@ -1,5 +1,6 @@
 
 Window* hist_window_ptr;
+Histogram* histogram;
 
 LRESULT CALLBACK hist_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -19,6 +20,7 @@ LRESULT CALLBACK hist_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		PAINTSTRUCT decoy;
 		BeginPaint(hwnd, &decoy);
 
+		draw_histogram(hist_window_ptr->canvas, *histogram, 10, 30);
 		hist_window_ptr->render_canvas();
 
 		EndPaint(hwnd, &decoy);
@@ -28,7 +30,18 @@ LRESULT CALLBACK hist_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	{
 			delete hist_window_ptr;
 	}break;
-
+	case WM_KEYDOWN:
+	{
+		uint32_t vk_code = (uint32_t)wParam;
+		bool is_down = ((lParam & (1 << 31)) == 0);
+		switch (vk_code)
+		{
+			case VK_ESCAPE:
+			{
+				SendMessageW(hwnd, WM_CLOSE, 0, 0);
+			}break;
+		}
+	}break;
 	default:
 		res = DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}

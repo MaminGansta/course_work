@@ -30,5 +30,11 @@
     <ClCompile Include="massage_handlers\histogram_msg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="work_stuff\histogram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="layout\draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

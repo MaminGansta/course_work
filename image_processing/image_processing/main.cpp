@@ -22,14 +22,17 @@ thread_pool workers(2);
 #include "canvas.cpp"
 #include "window.cpp"
 #include "image.cpp"
+#include "draw.cpp"
 #include "input.cpp"
 #include "timer.cpp"
+
+// work stuff
+#include "histogram.cpp"
 
 // massage callback
 #include "histogram_msg.cpp"
 #include "main_win_msg.cpp"
 
-// work stuff
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
@@ -50,10 +53,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		// processs massages
 		main_process_msg(main_window, keys, mouse);
-
 		Window::default_msg_proc();
-
 		
+		// work space
+
 
 		//timer
 		timer.update();

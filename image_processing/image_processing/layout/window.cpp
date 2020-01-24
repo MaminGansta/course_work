@@ -110,7 +110,7 @@ struct Window
 	~Window() 
 	{
 		handles.remove(class_id);
-		*pWindow = nullptr;
+		if (pWindow) *pWindow = nullptr;
 	}
 
 	void render_canvas(Canvas* surface = NULL)

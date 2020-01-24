@@ -15,7 +15,14 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case WM_COMMAND:
 		{
 			if (LOWORD(wParam) == BUTTON_HIST && hist_window_ptr == nullptr)
-				hist_window_ptr = new Window(L"hist", L"histogram", 600, 400, DEF_STYLE, hist_callback, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), hwnd, &hist_window_ptr);
+			{
+				if (!histogram)
+					histogram = new Histogram(*image_ptr);
+				else
+					histogram->update_info();
+
+				hist_window_ptr = new Window(L"hist", L"histogram", 1100, 400, DEF_STYLE, hist_callback, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), hwnd, &hist_window_ptr);
+			}
 		
 		}break;
 	
