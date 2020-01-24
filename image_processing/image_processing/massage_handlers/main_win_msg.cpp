@@ -37,7 +37,7 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			BeginPaint(hwnd, &decoy);
 		
 			draw_image(main_window_ptr->canvas, *image_ptr, 0, 0, main_window_ptr->canvas.width, main_window_ptr->canvas.height);
-			main_window_ptr->render_canvas(main_window_ptr->canvas);
+			main_window_ptr->render_canvas();
 		
 			EndPaint(hwnd, &decoy);
 		}break;

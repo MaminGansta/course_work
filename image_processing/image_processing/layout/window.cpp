@@ -4,21 +4,58 @@
 
 struct HWND_constainer
 {
+	int gen_id = 0;
+	std::vector<std::pair<int, HWND>> handles;
 
+	int add(HWND handle)
+	{
+		handles.push_back(std::make_pair(gen_id, handle));
+		return gen_id++;
+	}
+
+	void remove(int id)
+	{
+		auto handle = std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; });
+		DestroyWindow(handle->second);
+		handles.erase(handle);
+	}
+
+	HWND operator [](int id)
+	{
+		auto res = std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; });
+
+		if (res == handles.end())
+			return NULL;
+
+		return res->second;
+	}
+
+	void proc_msg()
+	{
+		for (auto& handle : handles)
+		{
+			MSG msg;
+			while (PeekMessage(&msg, handle.second, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+	}
+
+	int size() { return handles.size(); };
 };
 
 
 struct Window
 {
 	static std::vector<std::wstring> registred_classes;
-	static int gen_id;
-	//static std::map<int, HWND> handles;
-	static std::vector<std::pair<int, HWND>> handles;
-
+	static HWND_constainer handles;
+	Window** pWindow;
+	
 	int class_id;
 	HDC hdc;
 	Canvas canvas;
-
 
 
 	Window(
@@ -34,7 +71,11 @@ struct Window
 		int id = 0
 	)
 	{
-		if (window_ptr) *window_ptr = this;
+		if (window_ptr)
+		{
+			pWindow = window_ptr;
+			*pWindow = this;
+		}
 		WNDCLASSEX wc;
 		wc.cbSize = sizeof(wc);
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -61,47 +102,29 @@ struct Window
 			registred_classes.push_back(std::move(wClass_name));
 		}
 
-		class_id = gen_id++;
-		//handles[class_id] = CreateWindow(class_name, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, (HMENU)id,(HINSTANCE)hInstance, NULL);
 		HWND handle = CreateWindow(class_name, window_name, style, CW_USEDEFAULT, CW_USEDEFAULT, width, height, parent, (HMENU)id, (HINSTANCE)hInstance, NULL);
-		handles.push_back(std::make_pair(class_id, handle));
+		class_id = handles.add(handle);
 		hdc = GetDC(handle);
 	}
 
-	~Window()
+	~Window() 
 	{
-		int id = class_id;
-		auto el = std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; });
-		DestroyWindow(el->second);
-		handles.erase(el);
+		handles.remove(class_id);
+		*pWindow = nullptr;
 	}
 
-	void render_canvas(Canvas& surface)
+	void render_canvas(Canvas* surface = NULL)
 	{
-		StretchDIBits(hdc, 0, 0, surface.width, surface.height, 0, 0, surface.width, surface.height, surface.memory, &surface.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+		StretchDIBits(hdc, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height, canvas.memory, &canvas.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 	}
 
-	HWND getHWND() { int id = class_id;  return std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; })->second; }//handles[class_id]; }
+	HWND getHWND() { return handles[class_id]; }
 
-	static void default_msg_proc()
-	{
-		for (auto handle : handles)
-		{
-			MSG msg;
-			while (PeekMessage(&msg, handle.second, 0, 0, PM_REMOVE))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
-	}
+	static void default_msg_proc() { handles.proc_msg(); }
 };
 
 std::vector<std::wstring> Window::registred_classes = std::vector<std::wstring>();
-int Window::gen_id = 0;
-//std::map<int, HWND> Window::handles = std::map<int, HWND>();
-std::vector<std::pair<int, HWND>> Window::handles = std::vector<std::pair<int, HWND>>();
-
+HWND_constainer Window::handles = HWND_constainer();
 
 
 struct Button

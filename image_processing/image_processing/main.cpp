@@ -3,11 +3,8 @@
 #include <cstdint>
 #include <cstdio>
 
-#include <unordered_map>
-#include <map>
 #include <vector>
 #include <algorithm>
-#include <mutex>
 
 // global variables
 bool running = true;
@@ -56,16 +53,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		Window::default_msg_proc();
 
-		//MSG msg;
-		//while (GetMessage(&msg, NULL, NULL, NULL))
-		//{
-		//	if (!running) break;
-		//	TranslateMessage(&msg);
-		//	DispatchMessage(&msg);
-		//}
-
-		// work space
-
+		
 
 		//timer
 		timer.update();

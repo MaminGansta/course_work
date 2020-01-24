@@ -10,15 +10,23 @@ LRESULT CALLBACK hist_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	case WM_CREATE:
 	case WM_SIZE:
 	{
-		//RECT rect;
-		//GetClientRect(hwnd, &rect);
-		//main_surface_ptr->resize(rect.right - rect.left, rect.bottom - rect.top);
+		RECT rect;
+		GetClientRect(hwnd, &rect);
+		hist_window_ptr->canvas.resize(rect.right - rect.left, rect.bottom - rect.top);
 	} break;
+	case WM_PAINT:
+	{
+		PAINTSTRUCT decoy;
+		BeginPaint(hwnd, &decoy);
+
+		hist_window_ptr->render_canvas();
+
+		EndPaint(hwnd, &decoy);
+	}break;
 	//case WM_DESTROY:
 	case WM_CLOSE:
 	{
 			delete hist_window_ptr;
-			hist_window_ptr = nullptr;
 	}break;
 
 	default:
