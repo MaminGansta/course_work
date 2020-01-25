@@ -2,6 +2,8 @@
 
 // globals to chat between callback function
 Window* main_window_ptr;
+
+
 Image* image_ptr;
 
 #define BUTTON_HIST 1
@@ -21,7 +23,7 @@ LRESULT CALLBACK main_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				else
 					histogram->update_info();
 
-				hist_window_ptr = new Window(L"hist", L"histogram", 1100, 400, DEF_STYLE, hist_callback, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), hwnd, &hist_window_ptr);
+				hist_window_ptr = new Window(L"hist", L"histogram", 1100, 400, DEF_STYLE, hist_callback, (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL, &hist_window_ptr);
 			}
 		
 		}break;

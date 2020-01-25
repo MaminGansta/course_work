@@ -3,7 +3,7 @@ struct Color
 {
 	union
 	{
-		struct { uint8_t b, g, r, a; };
+		struct { uint8_t b, g, r, a;};
 		uint8_t raw[4];
 		uint32_t whole;
 	};
@@ -16,6 +16,22 @@ struct Color
 	Color operator *(float f)
 	{
 		return Color(r * f, g * f, b * f);
+	}
+
+	Color smart_mult(float f)
+	{
+		float size = r + g + b;
+		float sm_r = float(r) / size;
+		float sm_g = float(g) / size;
+		float sm_b = float(b) / size;;
+		return Color(min(max(r * sm_r * f, 0), 255), min(max(g * sm_g * f, 0), 255), min(max(b * sm_b * f, 0), 255));
+	}
+
+	Color operator *=(float f)
+	{
+		r *= f;
+		g *= f;
+		b *= f;
 	}
 };
 

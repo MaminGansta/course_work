@@ -29,7 +29,9 @@ thread_pool workers(2);
 // work stuff
 #include "histogram.cpp"
 
-// massage callback
+#include "color/auto_contrast.cpp"
+
+// massage callbacks
 #include "histogram_msg.cpp"
 #include "main_win_msg.cpp"
 
@@ -41,13 +43,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Mouse_Input mouse;
 	Timer timer(true);
 
-	Image japan("images/japan.jpg");
+	Image japan("images/japan3.jpg");
 	if (japan.invalid) return 2;
 	image_ptr = &japan;
 
 	// main window
-	Window main_window(L"main_window", L"immage processing", 800, 600, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance, NULL, &main_window_ptr);
+	Window main_window(L"main_window", L"immage processing", japan.width, japan.height, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance, NULL, &main_window_ptr);
 	Button button(L"histogram", main_window.getHWND(), BUTTON_HIST);
+
+
+
+	histogram = new Histogram(japan);
+
+	Image test = auto_contrast(japan, *histogram);
+	image_ptr = &test;
+	histogram = new Histogram(test);
 
 	while (running)
 	{
@@ -56,7 +66,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		Window::default_msg_proc();
 		
 		// work space
-
 
 		//timer
 		timer.update();

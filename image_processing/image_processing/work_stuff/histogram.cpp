@@ -4,10 +4,15 @@
 struct Histogram
 {
 	Image* image;
-	float brightness[255];
-	float red[255];
-	float green[255];
-	float blue[255];
+	float brightness[256];
+	float red[256];
+	float green[256];
+	float blue[256];
+
+	uint32_t cbrightness[256];
+	uint32_t cred[256];
+	uint32_t cgreen[256];
+	uint32_t cblue[256];
 
 	Histogram(Image& image) : image(&image)
 	{
@@ -16,15 +21,10 @@ struct Histogram
 
 	void update_info()
 	{
-		uint32_t* cbrightness = new uint32_t[256];
-		uint32_t* cred = new uint32_t[256];
-		uint32_t* cgreen = new uint32_t[256];
-		uint32_t* cblue = new uint32_t[256];
-
-		memset(cbrightness, 0, 255 * sizeof(uint32_t));
-		memset(cred, 0, 255 * sizeof(uint32_t));
-		memset(cgreen, 0, 255 * sizeof(uint32_t));
-		memset(cblue, 0, 255 * sizeof(uint32_t));
+		memset(cbrightness, 0, 256 * sizeof(uint32_t));
+		memset(cred, 0, 256 * sizeof(uint32_t));
+		memset(cgreen, 0, 256 * sizeof(uint32_t));
+		memset(cblue, 0, 256 * sizeof(uint32_t));
 
 		int size = image->width * image->height;
 		for (int i = 0; i < size; i++)
@@ -37,22 +37,17 @@ struct Histogram
 			cblue[color.b]++;
 		}
 
-		for (int i = 0; i < 255; i++)
+		for (int i = 0; i < 256; i++)
 			brightness[i] = float(cbrightness[i]) / size;
 
-		for (int i = 0; i < 255; i++)
+		for (int i = 0; i < 256; i++)
 			red[i] = float(cred[i]) / size;
 
-		for (int i = 0; i < 255; i++)
+		for (int i = 0; i < 256; i++)
 			green[i] = float(cgreen[i]) / size;
 
-		for (int i = 0; i < 255; i++)
+		for (int i = 0; i < 256; i++)
 			blue[i] = float(cblue[i]) / size;
-
-		delete[] cbrightness;
-		delete[] cred;
-		delete[] cgreen;
-		delete[] cblue;
 
 	}
 
@@ -60,12 +55,12 @@ struct Histogram
 
 void draw_graph(Canvas& surface, float* hist, int pos_x, int pos_y, Color color)
 {
-	drawLine(surface, pos_x, pos_y, pos_x + 255, pos_y, Color(200));
-	drawLine(surface, pos_x, pos_y, pos_x, pos_y + 255, Color(200));
+	drawLine(surface, pos_x, pos_y, pos_x + 255, pos_y, Color(80));
+	drawLine(surface, pos_x, pos_y, pos_x, pos_y + 255, Color(80));
 
 	for (int i = 0; i < 255; i++)
 	{
-		int height = 255 * hist[i] * 30;
+		int height = 255 * hist[i] * 40;
 		drawLine(surface, pos_x + i + 1, pos_y, pos_x + i + 1, pos_y + height, color);
 	}
 }

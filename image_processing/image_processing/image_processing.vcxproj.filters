@@ -36,5 +36,8 @@
     <ClCompile Include="layout\draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="operators\color\auto_contrast.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

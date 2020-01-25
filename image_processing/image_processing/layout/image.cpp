@@ -31,12 +31,43 @@ struct Image
 		stbi_image_free(raw);
 	}
 
+	Image(int width, int height) : width(width), height(height)
+	{
+		data = new Color[width * height];
+		invalid = false;
+	}
+
+	Image(Image&& other)
+	{
+		data = other.data;
+		width = other.width;
+		height = other.height;
+		other.data = NULL;
+		other.invalid = true;
+	}
+
+	Image& operator = (Image&& other)
+	{
+		data = other.data;
+		width = other.width;
+		height = other.height;
+		other.data = NULL;
+		other.invalid = true;
+		return *this;
+	}
+
 	Color& get_pixel(int x, int y)
 	{
 		assert(((uint32_t)y < height) | ((uint32_t)x < width));
 		return data[y * width + x];
 	}
 	
+	Color& operator [] (int idx)
+	{
+		assert((uint32_t)idx < width * height);
+		return data[idx];
+	}
+
 	Color& get_pixel_scaled(int x, int y, int screen_w, int screen_h)
 	{
 		y = y * height / screen_h;
