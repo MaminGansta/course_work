@@ -42,5 +42,8 @@
     <ClCompile Include="operators\color\gray_world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="operators\color\histogram_alignment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
