@@ -30,6 +30,7 @@ thread_pool workers(2);
 #include "histogram.cpp"
 
 #include "color/auto_contrast.cpp"
+#include "color/gray_world.cpp"
 
 // massage callbacks
 #include "histogram_msg.cpp"
@@ -43,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Mouse_Input mouse;
 	Timer timer(true);
 
-	Image japan("images/japan3.jpg");
+	Image japan("images/japan2.jpg");
 	if (japan.invalid) return 2;
 	image_ptr = &japan;
 
@@ -55,7 +56,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	histogram = new Histogram(japan);
 
-	Image test = auto_contrast(japan, *histogram);
+	//Image test = auto_contrast(japan, *histogram);
+	//image_ptr = &test;
+	//histogram = new Histogram(test);
+
+
+	Image test = gray_world(japan, *histogram);
 	image_ptr = &test;
 	histogram = new Histogram(test);
 

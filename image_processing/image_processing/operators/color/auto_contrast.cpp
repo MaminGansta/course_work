@@ -9,7 +9,7 @@ Image auto_contrast(Image& image, Histogram& hist)
 {
 	Image res(image.width, image.height);
 	// amount of cutting, 5% from bounds
-	int cut_amount = lrint(0.01f * image.height * image.width);
+	int cut_amount = 0.01f * image.height * image.width;
 	int x_min, x_max;
 
 
@@ -36,7 +36,7 @@ Image auto_contrast(Image& image, Histogram& hist)
 		}
 	}
 
-	float c = 256.0f / (x_max - x_min);
+	float c = 255.0f / (x_max - x_min);
 	for (int i = 0; i < image.height * image.width; i++)
 	{
 		Color pixel = image[i];
