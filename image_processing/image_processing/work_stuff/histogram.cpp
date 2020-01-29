@@ -3,7 +3,7 @@
 
 struct Histogram
 {
-	Image* image;
+	Image* image = NULL;
 	float brightness[256];
 	float red[256];
 	float green[256];
@@ -14,9 +14,18 @@ struct Histogram
 	uint32_t cgreen[256];
 	uint32_t cblue[256];
 
-	Histogram(Image& image) : image(&image)
+
+	Histogram() {}
+
+	Histogram(Image& image)
 	{
+		set_img(image);
 		update_info();
+	}
+
+	void set_img(Image& img)
+	{
+		image = &img;
 	}
 
 	void update_info()

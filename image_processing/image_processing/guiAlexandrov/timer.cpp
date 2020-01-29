@@ -8,11 +8,11 @@ struct Timer
 {
 	high_resolution_clock::time_point privius;
 
-	int FPS{0};
-	float FrameTimeAVG{0};
+	int FPS = 0;
+	float FrameTimeAVG = 0;
 
-	float m_timeSum{0}; // in one sec
-	int m_Frames{0};
+	float m_timeSum = 0;
+	int m_Frames = 0;
 
 	bool m_frameLock;
 	float m_frameLock_time = 0.016777;
@@ -41,7 +41,7 @@ struct Timer
 		}
 
 		m_timeSum += elapsed;
-		if (m_timeSum > 1.)
+		if (m_timeSum > 1.0f)
 		{
 			FPS = m_Frames;
 			FrameTimeAVG = m_timeSum / FPS;

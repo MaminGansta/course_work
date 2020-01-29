@@ -5,57 +5,54 @@
 
 #include <vector>
 #include <algorithm>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 // global variables
 bool running = true;
 
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "guiAlexandrov/include.h"
 
 
-// unity build
-#include "thread_pool.cpp"
-thread_pool workers(2);
-
-// laoyt
-#include "canvas.cpp"
-#include "window.cpp"
-#include "image.cpp"
-#include "draw.cpp"
-#include "input.cpp"
-#include "timer.cpp"
 
 // work stuff
 #include "histogram.cpp"
+#include "image_window.cpp"
+#include "main_window.cpp"
 
 #include "color/auto_contrast.cpp"
 #include "color/gray_world.cpp"
 #include "color/histogram_alignment.cpp"
 
-// massage callbacks
-#include "histogram_msg.cpp"
-#include "main_win_msg.cpp"
-
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	al_init(hInstance);
+
+
+	// test space
+
+
 	Key_Input keys;
 	Mouse_Input mouse;
 	Timer timer(true);
 
-	Image japan("images/low_contrast7.jpg");
+	Image japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
-	image_ptr = &japan;
 
-	// main window
-	Window main_window(L"main_window", L"immage processing", japan.width, japan.height, WS_OVERLAPPEDWINDOW | WS_VISIBLE, main_callback, hInstance, NULL, &main_window_ptr);
-	Button button(L"histogram", main_window.getHWND(), BUTTON_HIST);
+	//Window main_window(L"main", 800, 600, DEF_STYLE, NULL, NULL, [] (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)->LRESULT
+	//{
+	//	if (msg == WM_CLOSE) running = false;
+	//	return DefWindowProc(hwnd, msg, wParam, lParam);
+	//});
+
+	Main_window main_win(L"images");
 
 
+	//Image_window win(japan);
 
-	histogram = new Histogram(japan);
 
 	//Image test = auto_contrast(japan, *histogram);
 	//image_ptr = &test;
@@ -66,26 +63,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//image_ptr = &test1;
 	//histogram = new Histogram(test1);
 
-	Image test = hist_alignment(japan, *histogram);
-	image_ptr = &test;
-	histogram = new Histogram(test);
+	//Image test = hist_alignment(japan, *histogram);
+	//image_ptr = &test;
+	//histogram = new Histogram(test);
 
 
 	while (running)
 	{
 		// processs massages
-		main_process_msg(main_window, keys, mouse);
 		Window::default_msg_proc();
+
 		
 		// work space
 
 		//timer
 		timer.update();
 
-		// log
-		//char log[128];
-		//sprintf_s(log, "%d\n", timer.FPS);
-		//OutputDebugStringA(log);
 	}
 
 	return 0;

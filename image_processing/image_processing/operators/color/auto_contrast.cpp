@@ -9,7 +9,7 @@ Image auto_contrast(Image& image, Histogram& hist)
 {
 	Image res(image.width, image.height);
 	// amount of cutting, 5% from bounds
-	int cut_amount = 0.01f * image.height * image.width;
+	int cut_amount = 0.05f * image.height * image.width;
 	int x_min, x_max;
 
 

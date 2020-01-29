@@ -45,5 +45,11 @@
     <ClCompile Include="operators\color\histogram_alignment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="work_stuff\image_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="work_stuff\main_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

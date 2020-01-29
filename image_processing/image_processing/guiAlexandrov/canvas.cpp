@@ -46,10 +46,13 @@ struct Canvas
 
 	~Canvas() { VirtualFree(memory, 0, MEM_RELEASE); }
 
-	void resize(int new_width, int new_height)
+	void resize(HWND hwnd)
 	{
-		width = new_width;
-		height = new_height;
+		RECT rect;
+		GetClientRect(hwnd, &rect);
+
+		width = rect.right - rect.left;
+		height = rect.bottom - rect.top;
 
 		whole_size = width * height;
 		int size = whole_size * sizeof(unsigned int);
