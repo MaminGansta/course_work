@@ -98,6 +98,10 @@ struct Image_window : public Window
 						}
 					}
 				}break;
+				case WM_CLOSE:
+				{
+					safe_release(&window);
+				}
 				default:
 				{
 					return DefWindowProc(hwnd, msg, wParam, lParam);

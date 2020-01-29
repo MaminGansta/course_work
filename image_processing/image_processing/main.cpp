@@ -73,7 +73,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// processs massages
 		Window::default_msg_proc();
 
-		
+		SendMessage(main_win.getHWND(), CHECK_INPUT, 0, 0);
 		// work space
 
 		//timer
