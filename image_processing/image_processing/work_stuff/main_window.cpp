@@ -5,6 +5,7 @@ struct vec2i
 {
 	int x, y;
 
+	vec2i() = default;
 	vec2i(int x, int y) : x(x), y(y) {}
 };
 
@@ -15,6 +16,7 @@ struct Screen_img : public Image
 	bool on_screen;
 	bool clicked;
 
+	Screen_img() = default;
 	Screen_img(std::wstring name) : Image(name.c_str()), clicked(false), on_screen(false), left({0, 0}), right({0, 0}) {}
 
 	bool if_click(vec2i cl_pos)
@@ -22,7 +24,6 @@ struct Screen_img : public Image
 		return clicked = (on_screen && cl_pos.x > left.x&& cl_pos.y > left.y&& cl_pos.x < right.x && cl_pos.y < right.y);
 	}
 };
-
 
 void draw_screen_image(Canvas& surface, Screen_img& image,
 	float fpos_x, float fpos_y, float fwidth, float fheight)
@@ -34,18 +35,30 @@ void draw_screen_image(Canvas& surface, Screen_img& image,
 	draw_image(surface, image, fpos_x, fpos_y, fwidth, fheight);
 }
 
+
+
+
 struct Main_window : public Window
 {
 	std::vector<Screen_img> images;
 
 	Main_window(std::wstring dir_path)
 	{
+		std::vector<std::future<Screen_img>> load_acync;
 		images.reserve(10);
+		load_acync.reserve(10);
+
 		for (const auto& entry : fs::directory_iterator(dir_path))
 		{
 			std::filesystem::path path = entry.path();
-			images.push_back(std::move(Screen_img(path.c_str())));
+			load_acync.push_back(workers.add_task([path]() { return std::move(Screen_img(path.c_str())); }));
+			//images.push_back(std::move(Screen_img(path.c_str())));
 		}
+
+		for (auto& loads : load_acync)
+			images.push_back(loads.get());
+
+
 
 		init(L"main window", 800, 600, DEF_STYLE | WS_VSCROLL, NULL, NULL, [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)->LRESULT
 		{
@@ -64,7 +77,7 @@ struct Main_window : public Window
 					PAINTSTRUCT plug;
 					BeginPaint(hwnd, &plug);
 
-					draw_filled_rect(window->canvas, 0, 0, window->canvas.width, window->canvas.height, Color(255, 255, 255));
+					draw_filled_rect(window->canvas, 0, 0, window->canvas.width, window->canvas.height, Color(228));
 
 
 					for (auto& image : window->images)

@@ -83,7 +83,6 @@ struct Image_window : public Window
 				{
 					PAINTSTRUCT plug;
 					BeginPaint(hwnd, &plug);
-					// paint here
 					draw_image(window->canvas, window->img, 0, 0, window->canvas.width, window->canvas.height);
 					window->render_canvas();
 					EndPaint(hwnd, &plug);
@@ -100,6 +99,7 @@ struct Image_window : public Window
 				}break;
 				case WM_CLOSE:
 				{
+					safe_release(&window->hist_win);
 					safe_release(&window);
 				}
 				default:

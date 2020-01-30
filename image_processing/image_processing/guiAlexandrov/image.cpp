@@ -6,6 +6,7 @@ struct Image
 	Color* data = NULL;
 	bool invalid = false;
 
+	Image() = default;
 	Image(const wchar_t* filename_utf8)
 	{
 		int chanels;
