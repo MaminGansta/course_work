@@ -18,13 +18,14 @@ bool running = true;
 
 // work stuff
 #include "histogram.cpp"
-#include "image_window.cpp"
-#include "main_window.cpp"
 
 #include "color/auto_contrast.cpp"
 #include "color/gray_world.cpp"
 #include "color/histogram_alignment.cpp"
+#include "convolutions/convolution.cpp"
 
+#include "image_window.cpp"
+#include "main_window.cpp"
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
@@ -32,49 +33,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	al_init(hInstance);
 
 
-	// test space
-
-
-	Key_Input keys;
-	Mouse_Input mouse;
-	Timer timer(true);
-
 	Image japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
 
-	//Window main_window(L"main", 800, 600, DEF_STYLE, NULL, NULL, [] (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)->LRESULT
-	//{
-	//	if (msg == WM_CLOSE) running = false;
-	//	return DefWindowProc(hwnd, msg, wParam, lParam);
-	//});
+	Core<3> core;
 
-	Main_window main_win(L"images");
+	Image test = core.apply(japan);
 
 
-	//Image_window win(japan);
+	new Image_window(test);
+	
+	// static stuff
+	//Main_window main_win(L"images");
 
 
-	//Image test = auto_contrast(japan, *histogram);
-	//image_ptr = &test;
-	//histogram = new Histogram(test);
-
-
-	//Image test1 = gray_world(test, *histogram);
-	//image_ptr = &test1;
-	//histogram = new Histogram(test1);
-
-	//Image test = hist_alignment(japan, *histogram);
-	//image_ptr = &test;
-	//histogram = new Histogram(test);
-
-
+	Timer timer(true);
 	while (running)
 	{
 		// processs massages
 		Window::default_msg_proc();
 
-		SendMessage(main_win.getHWND(), CHECK_INPUT, 0, 0);
 		// work space
+
+
 
 		//timer
 		timer.update();

@@ -1,11 +1,9 @@
 
-#define CHECK_INPUT 10
-
 struct vec2i
 {
 	int x, y;
 
-	vec2i() = default;
+	vec2i() : x(0), y(0) {}
 	vec2i(int x, int y) : x(x), y(y) {}
 };
 
@@ -21,7 +19,7 @@ struct Screen_img : public Image
 
 	bool if_click(vec2i cl_pos)
 	{
-		return clicked = (on_screen && cl_pos.x > left.x&& cl_pos.y > left.y&& cl_pos.x < right.x && cl_pos.y < right.y);
+		return clicked = (on_screen && cl_pos.x > left.x && cl_pos.y > left.y && cl_pos.x < right.x && cl_pos.y < right.y);
 	}
 };
 
@@ -42,6 +40,7 @@ struct Main_window : public Window
 {
 	std::vector<Screen_img> images;
 
+
 	Main_window(std::wstring dir_path)
 	{
 		std::vector<std::future<Screen_img>> load_acync;
@@ -52,12 +51,11 @@ struct Main_window : public Window
 		{
 			std::filesystem::path path = entry.path();
 			load_acync.push_back(workers.add_task([path]() { return std::move(Screen_img(path.c_str())); }));
-			//images.push_back(std::move(Screen_img(path.c_str())));
+			//images.push_back(std::move(Screen_img(path.c_str()))); // single thread load
 		}
 
 		for (auto& loads : load_acync)
 			images.push_back(loads.get());
-
 
 
 		init(L"main window", 800, 600, DEF_STYLE | WS_VSCROLL, NULL, NULL, [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)->LRESULT
@@ -77,7 +75,7 @@ struct Main_window : public Window
 					PAINTSTRUCT plug;
 					BeginPaint(hwnd, &plug);
 
-					draw_filled_rect(window->canvas, 0, 0, window->canvas.width, window->canvas.height, Color(228));
+					draw_filled_rect(window->canvas, 0.0f, 0.0f, 1.0f, 1.0f, Color(228));
 
 
 					for (auto& image : window->images)
@@ -100,21 +98,11 @@ struct Main_window : public Window
 					int yPos = window->canvas.height - HIWORD(lParam);
 
 					for (auto& img : window->images)
-						img.if_click({ xPos, yPos });
-
-				}break;
-				case CHECK_INPUT:
-				{
-					for (auto& image : window->images)
 					{
-						if (image.clicked)
-						{
-							new Image_window(image);
-							image.clicked = false;
-						}
+						if (img.if_click({ xPos, yPos }))
+							new Image_window(img);
 					}
-					return 0;
-				}
+				}break;
 				case WM_CLOSE:
 				{
 					running = false;
