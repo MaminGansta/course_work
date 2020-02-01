@@ -127,7 +127,7 @@ void draw_image(Canvas& surface, Image& image,
 		int from_x = i * width / workers.size;
 		int to_x   = (i + 1) * width / workers.size;
 
-		res[i] = workers.add_task([from_x, to_x, pos_y, pos_x, &height, &width, &surface, &image]()
+		res[i] = workers.add_task([from_x, to_x, pos_y, pos_x, height, width, &surface, &image]()
 		{
 			for (int y = 0; y < height; y++)
 				for (int x = from_x; x < to_x; x++)

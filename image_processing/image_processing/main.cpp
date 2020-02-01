@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 
 // global variables
 bool running = true;
-
+#define PI 3.14159265359f
 
 #include "guiAlexandrov/include.h"
 
@@ -35,16 +35,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Image japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
+	
+	Gaussian_filter<1> gaus;
 
-	Core<3> core;
-
-	Image test = core.apply(japan);
-
-
+	Image test = gaus.apply(japan);
 	new Image_window(test);
+
+
 	
 	// static stuff
 	//Main_window main_win(L"images");
+
 
 
 	Timer timer(true);
