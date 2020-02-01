@@ -5,6 +5,23 @@ struct Kernal
 {
 	float kernal[size][size];
 
+
+	Kernal(std::initializer_list<float> coefs)
+	{
+		assert(size * size == coefs.size());
+		auto coef_ptr = coefs.begin();
+		float total = 0;
+
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+			{
+				total += *coef_ptr;
+				kernal[i][j] = *coef_ptr++;
+			}
+	}
+
+	Kernal() = default;
+
 	Image apply(Image& original)
 	{
 		Image res(original.width, original.height);
@@ -33,9 +50,9 @@ struct Kernal
 						b += pixel.b * kernal[i][j];
 					}
 				}
-				res[y * res.width + x].r = r;
-				res[y * res.width + x].g = g;
-				res[y * res.width + x].b = b;
+				res[y * res.width + x].r = max(min(r, 255.0f), 0);
+				res[y * res.width + x].g = max(min(g, 255.0f), 0);
+				res[y * res.width + x].b = max(min(b, 255.0f), 0);
 			}
 		}
 
@@ -93,4 +110,13 @@ struct Gaussian_filter :  Kernal<mat_size(sigma)>
 			}
 		}
 	}
+};
+
+
+// =================== Sharpness ==================
+
+struct Sharpness : public Kernal<3>
+{
+
+	Sharpness() : Kernal({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
 };

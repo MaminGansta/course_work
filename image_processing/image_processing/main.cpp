@@ -36,9 +36,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Image japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
 	
-	Gaussian_filter<1> gaus;
+	Gaussian_filter<1> gauss;
+	Sharpness sh;
 
-	Image test = gaus.apply(japan);
+	
+	Image test = sh.apply(japan);
+
 	new Image_window(test);
 
 
