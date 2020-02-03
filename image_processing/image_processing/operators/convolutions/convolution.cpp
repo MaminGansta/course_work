@@ -29,22 +29,21 @@ struct Kernal
 		// main area
 		int pad = size / 2;
 
-		int x0 = pad;
-		int y0 = pad;
-		int width = original.width - pad;
-		int height = original.height - pad;
-
-
-		for (int y = y0; y < height; y++)
+		for (int y = 0; y < original.height; y++)
 		{
-			for (int x = x0; x < width; x++)
+			for (int x = 0; x < original.width; x++)
 			{
 				float r = 0, g = 0, b = 0;
 				for (int i = 0; i < size; i++)
 				{
 					for (int j = 0; j < size; j++)
 					{
-						Color& pixel = original[(y - pad + i) * original.width + x - pad + j];
+						int core_y = abs(y - pad + i);
+						int core_x = abs(x - pad + j);
+						if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+						if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+						Color& pixel = original[core_y * original.width + core_x];
 						r += pixel.r * kernal[i][j];
 						g += pixel.g * kernal[i][j];
 						b += pixel.b * kernal[i][j];
@@ -56,11 +55,9 @@ struct Kernal
 			}
 		}
 
-		// edges
-
-
 		return res;
 	}
+
 
 	float* operator [] (int i) { return kernal[i]; }
 };
