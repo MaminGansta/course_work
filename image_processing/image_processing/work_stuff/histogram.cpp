@@ -62,27 +62,28 @@ struct Histogram
 
 };
 
-void draw_graph(Canvas& surface, float* hist, int pos_x, int pos_y, Color color)
+void draw_graph(Canvas& surface, float* hist, float pos_x, float pos_y, Color color)
 {
-	drawLine(surface, pos_x, pos_y, pos_x + 255, pos_y, Color(80));
-	drawLine(surface, pos_x, pos_y, pos_x, pos_y + 255, Color(80));
+	fdraw_line(surface, pos_x, pos_y, pos_x + 0.2f, pos_y, Color(80));
+	fdraw_line(surface, pos_x, pos_y, pos_x, pos_y + 0.8f, Color(80));
 
+	float step = 0.2f / 255;
 	for (int i = 0; i < 255; i++)
 	{
-		int height = 255 * hist[i] * 40;
-		drawLine(surface, pos_x + i + 1, pos_y, pos_x + i + 1, pos_y + height, color);
+		float height = hist[i] * 40;
+		fdraw_line(surface, pos_x + (i * step), pos_y, pos_x + (i * step), pos_y + height, color);
 	}
 }
 
-void draw_histogram(Canvas& surface, Histogram& hist, int pos_x, int pos_y)
+void draw_histogram(Canvas& surface, Histogram& hist, float pos_x, float pos_y)
 {
 	// brightness
 	draw_graph(surface, hist.brightness, pos_x, pos_y, Color(250));
 	// red
-	draw_graph(surface, hist.red, pos_x + 270, pos_y, Color(255, 50, 50));
+	draw_graph(surface, hist.red, pos_x + 0.25f, pos_y, Color(255, 50, 50));
 	// green
-	draw_graph(surface, hist.green, pos_x + 540, pos_y, Color(50, 255, 50));
+	draw_graph(surface, hist.green, pos_x + 0.5f, pos_y, Color(50, 255, 50));
 	// blue
-	draw_graph(surface, hist.blue, pos_x + 810, pos_y, Color(50, 50, 255));
+	draw_graph(surface, hist.blue, pos_x + 0.75f, pos_y, Color(50, 50, 255));
 }
 

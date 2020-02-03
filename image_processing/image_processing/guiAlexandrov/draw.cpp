@@ -55,6 +55,15 @@ inline void drawLine(Canvas& surface, int x, int y, int x2, int y2, Color color)
 	}
 }
 
+void fdraw_line(Canvas& surface, float fx0, float fy0, float fx1, float fy1, Color color)
+{
+	int x0 = fx0 * surface.width;
+	int y0 = fy0 * surface.height;
+	int x1 = fx1 * surface.width;
+	int y1 = fy1 * surface.height;
+	drawLine(surface, x0, y0, x1, y1, color);
+}
+
 
 inline void draw_filled_rect(Canvas& surface, float fx, float fy, float fwidth, float fheight, Color color)
 {

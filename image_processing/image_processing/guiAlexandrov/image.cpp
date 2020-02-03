@@ -129,10 +129,13 @@ void draw_image(Canvas& surface, Image& image,
 
 		res[i] = workers.add_task([from_x, to_x, pos_y, pos_x, height, width, &surface, &image]()
 		{
+			doutput("%d, %d\n", surface.width, surface.height);
 			for (int y = 0; y < height; y++)
 				for (int x = from_x; x < to_x; x++)
 				{
-					surface.memory[(y + pos_y)* surface.width + (x + pos_x)] = image.get_pixel_scaled(x, y, width , height);
+					assert(x < surface.width);
+					Color color = image.get_pixel_scaled(x, y, width, height);
+					surface.memory[(y + pos_y) * surface.width + (x + pos_x)] = color;
 				}
 		});
 	}

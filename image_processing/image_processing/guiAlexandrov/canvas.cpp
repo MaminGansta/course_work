@@ -40,11 +40,11 @@ struct Canvas
 {
 	int height, width;
 	int whole_size;
-	Color* memory;
+	Color* memory = nullptr;
 
 	BITMAPINFO bitmap_info;
 
-	~Canvas() { VirtualFree(memory, 0, MEM_RELEASE); }
+	~Canvas() { delete[] memory; } //VirtualFree(memory, 0, MEM_RELEASE); }
 
 	void resize(HWND hwnd)
 	{
@@ -57,8 +57,11 @@ struct Canvas
 		whole_size = width * height;
 		int size = whole_size * sizeof(unsigned int);
 
-		VirtualFree(memory, 0, MEM_RELEASE);
-		memory = (Color*)VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		//VirtualFree(memory, 0, MEM_RELEASE);
+		//memory = (Color*)VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		//if (!memory) doutput("NULL");
+		delete[] memory;
+		memory = new Color[size];
 
 		bitmap_info.bmiHeader.biSize = sizeof(bitmap_info.bmiHeader);
 		bitmap_info.bmiHeader.biWidth = width;

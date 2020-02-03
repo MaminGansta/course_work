@@ -115,8 +115,8 @@ struct Gaussian_filter :  Kernal<mat_size(sigma)>
 
 // =================== Sharpness ==================
 
-struct Sharpness : public Kernal<3>
+struct Sharp_filter : public Kernal<3>
 {
 
-	Sharpness() : Kernal({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
+	Sharp_filter() : Kernal({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
 };
