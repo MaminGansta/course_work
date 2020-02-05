@@ -58,11 +58,10 @@ struct Image_window : public Window
 {
 	Image img;
 	Histogram hist;
+	Window* hist_win;
 
 	Button btn_hist;
 
-	Window_Histogram argum;
-	Window* hist_win;
 
 	Image_window(Image& image) : img(image), hist(img), hist_win(NULL)
 	{

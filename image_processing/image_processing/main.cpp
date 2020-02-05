@@ -35,16 +35,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Image japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
-	
+
 	Gaussian_filter<1> gauss;
 	Sharp_filter sharp;
-	
+
+	Speed_test([&sharp, &japan]() { sharp.apply(japan); });
+
 	Image test = sharp.apply(japan);
-
 	new Image_window(test);
+	new Image_window(japan);
 
 
-	
 	// static stuff
 	//Main_window main_win(L"images");
 

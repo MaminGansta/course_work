@@ -25,3 +25,17 @@ struct Time
 		doutput("%f\n", elapsed);
 	}
 };
+
+
+void Speed_test(std::function<void()> target)
+{
+	float total_time = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		float start = get_time();
+		target();
+		total_time += get_time() - start;
+	}
+
+	doutput("%f\n", total_time * 0.1f);
+}
