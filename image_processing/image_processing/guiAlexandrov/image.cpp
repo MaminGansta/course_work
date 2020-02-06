@@ -242,6 +242,14 @@ struct fImage
 	~fImage() { delete[] data; }
 
 
+	void resize(int width, int height)
+	{
+		this->width = width;
+		this->height = height;
+		data = new fColor[width * height];
+		invalid = false;
+	}
+
 	fColor& get_pixel(int x, int y)
 	{
 		assert(((uint32_t)y < height) | ((uint32_t)x < width));

@@ -21,18 +21,19 @@ struct Kernal
 		float total = 0;
 
 		for (int i = 0; i < size; i++)
+		{
 			for (int j = 0; j < size; j++)
 			{
 				total += *coef_ptr;
 				kernal[i][j] = *coef_ptr++;
 			}
+		}
 	}
 
 	Kernal() = default;
 
 	fImage apply(fImage& original)
 	{
-		// TODO: return value optimization must be here, check this
 		fImage res(original.width, original.height);
 		
 		// main area
@@ -47,9 +48,7 @@ struct Kernal
 		{
 			for (int x = x0; x < width; x++)
 			{
-				// TODO: make SIMD optimization
-				
-				// rgb in windows is bgr (i dnk why)
+				// rgb is bgr in windows (i dnk why)
 				__m128 bgr = { 0.0f, 0.0f, 0.0f, 0.0f };
 				for (int i = 0; i < size; i++)
 				{
