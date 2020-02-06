@@ -36,8 +36,10 @@ struct Kernal
 
 	fImage apply(fImage& original)
 	{
-		fImage res(original.width, original.height);
-		
+		// get RVO
+		fImage res;
+		res.resize(original.width, original.height);
+
 		// main area
 		int pad = size / 2;
 

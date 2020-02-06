@@ -246,6 +246,7 @@ struct fImage
 	{
 		this->width = width;
 		this->height = height;
+		delete[] data;
 		data = new fColor[width * height];
 		invalid = false;
 	}
