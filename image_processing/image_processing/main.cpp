@@ -12,9 +12,9 @@ namespace fs = std::filesystem;
 bool running = true;
 #define PI 3.14159265359f
 
+#include <xmmintrin.h>
+
 #include "guiAlexandrov/include.h"
-
-
 
 // work stuff
 #include "histogram.cpp"
@@ -33,7 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	al_init(hInstance);
 
 
-	Image japan(L"images/japan.jpg");
+	fImage japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
 
 	Gaussian_filter<1> gauss;
@@ -41,10 +41,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Speed_test([&sharp, &japan]() { sharp.apply(japan); });
 
-	Image test = sharp.apply(japan);
+	fImage test = sharp.apply(japan);
 	new Image_window(test);
 	new Image_window(japan);
-
 
 	// static stuff
 	//Main_window main_win(L"images");

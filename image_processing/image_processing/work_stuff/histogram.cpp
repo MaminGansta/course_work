@@ -3,7 +3,7 @@
 
 struct Histogram
 {
-	Image* image = NULL;
+	fImage* image = NULL;
 	float brightness[256];
 	float red[256];
 	float green[256];
@@ -17,13 +17,13 @@ struct Histogram
 
 	Histogram() {}
 
-	Histogram(Image& image)
+	Histogram(fImage& image)
 	{
 		set_img(image);
 		update_info();
 	}
 
-	void set_img(Image& img)
+	void set_img(fImage& img)
 	{
 		image = &img;
 	}
@@ -38,7 +38,7 @@ struct Histogram
 		int size = image->width * image->height;
 		for (int i = 0; i < size; i++)
 		{
-			Color color = image->data[i];
+			Color color = image->data[i].get_uint();
 			uint8_t br = (color.r + color.g + color.b) / 3;
 			cbrightness[br]++;
 			cred[color.r]++;
@@ -57,7 +57,6 @@ struct Histogram
 
 		for (int i = 0; i < 256; i++)
 			blue[i] = float(cblue[i]) / size;
-
 	}
 
 };

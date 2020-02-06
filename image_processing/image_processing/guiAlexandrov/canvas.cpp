@@ -18,15 +18,6 @@ struct Color
 		return Color(r * f, g * f, b * f);
 	}
 
-	Color smart_mult(float f)
-	{
-		float size = r + g + b;
-		float sm_r = float(r) / size;
-		float sm_g = float(g) / size;
-		float sm_b = float(b) / size;;
-		return Color(min(max(r * sm_r * f, 0), 255), min(max(g * sm_g * f, 0), 255), min(max(b * sm_b * f, 0), 255));
-	}
-
 	Color operator *=(float f)
 	{
 		r *= f;
@@ -44,7 +35,7 @@ struct Canvas
 
 	BITMAPINFO bitmap_info;
 
-	~Canvas() { delete[] memory; } //VirtualFree(memory, 0, MEM_RELEASE); }
+	~Canvas() { delete[] memory; }
 
 	void resize(HWND hwnd)
 	{
@@ -57,9 +48,6 @@ struct Canvas
 		whole_size = width * height;
 		int size = whole_size * sizeof(unsigned int);
 
-		//VirtualFree(memory, 0, MEM_RELEASE);
-		//memory = (Color*)VirtualAlloc(0, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-		//if (!memory) doutput("NULL");
 		delete[] memory;
 		memory = new Color[size];
 

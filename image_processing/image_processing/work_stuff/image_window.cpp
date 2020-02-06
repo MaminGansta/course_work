@@ -56,14 +56,14 @@ struct Hist_window : public Window
 
 struct Image_window : public Window
 {
-	Image img;
+	fImage img;
 	Histogram hist;
 	Window* hist_win;
 
 	Button btn_hist;
 
 
-	Image_window(Image& image) : img(image), hist(img), hist_win(NULL)
+	Image_window(fImage& image) : img(image), hist(img), hist_win(NULL)
 	{
 		
 		init(L"image", image.width, image.height, DEF_STYLE, NULL, NULL, [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)->LRESULT

@@ -7,7 +7,7 @@ struct vec2i
 	vec2i(int x, int y) : x(x), y(y) {}
 };
 
-struct Screen_img : public Image
+struct Screen_img : public fImage
 {
 	vec2i left;
 	vec2i right;
@@ -15,7 +15,7 @@ struct Screen_img : public Image
 	bool clicked;
 
 	Screen_img() = default;
-	Screen_img(std::wstring name) : Image(name.c_str()), clicked(false), on_screen(false), left({0, 0}), right({0, 0}) {}
+	Screen_img(std::wstring name) : fImage(name.c_str()), clicked(false), on_screen(false), left({0, 0}), right({0, 0}) {}
 
 	bool if_click(vec2i cl_pos)
 	{
