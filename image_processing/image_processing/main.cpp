@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	al_init(hInstance);
 
-
+	// test wrokspace
 	fImage japan(L"images/japan.jpg");
 	if (japan.invalid) return 2;
 
@@ -45,10 +45,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	new Image_window(test);
 	new Image_window(japan);
 
+
+
 	// static stuff
 	//Main_window main_win(L"images");
-
-
 
 	Timer timer(true);
 	while (running)

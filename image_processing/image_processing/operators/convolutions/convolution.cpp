@@ -8,6 +8,8 @@ inline int my_abs(int value)
 }
 
 
+// ============== Kernal class ===================
+
 template <size_t size>
 struct Kernal
 {
@@ -48,7 +50,7 @@ struct Kernal
 		{
 			for (int x = x0; x < width; x++)
 			{
-				// rgb is bgr in windows (i dnk why)
+				// rgb(rgba) is bgr(bgra) in windows (i dnk why)
 				__m128 bgr = { 0.0f, 0.0f, 0.0f, 0.0f };
 				for (int i = 0; i < size; i++)
 				{
@@ -180,7 +182,7 @@ struct Gaussian_filter :  Kernal<mat_size(sigma)>
 };
 
 
-// =================== Sharpness ==================
+// =================== Sharp filter ====================
 
 struct Sharp_filter : public Kernal<3>
 {

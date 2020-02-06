@@ -34,7 +34,7 @@ struct Hist_window : public Window
 				PAINTSTRUCT plug;
 				BeginPaint(hwnd, &plug);
 
-				//draw_filled_rect(hist_window->canvas, 0, 0, 1, 1, Color(0));
+				draw_filled_rect(hist_window->canvas, 0.0f, 0.0f, 1.0f, 1.0f, Color(0));
 				draw_histogram(hist_window->canvas, *hist, 0.02f, 0.05f);
 				hist_window->render_canvas();
 
