@@ -4,6 +4,7 @@
 #include <cstdio>
 
 #include <vector>
+#include <array>
 #include <algorithm>
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -23,6 +24,7 @@ bool running = true;
 #include "color/gray_world.cpp"
 #include "color/histogram_alignment.cpp"
 #include "convolutions/convolution.cpp"
+#include "median_filter.cpp"
 
 #include "image_window.cpp"
 #include "main_window.cpp"
@@ -38,13 +40,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Gaussian_filter<1> gauss;
 	Sharp_filter sharp;
+	Median_filter<3> median;
 
-	Speed_test([&sharp, &japan]() { sharp.apply(japan); });
-
-	fImage test = sharp.apply(japan);
+	//Speed_test([&sharp, &japan]() { sharp.apply(japan); });
+	//fImage test = sharp.apply(japan);
+	fImage test = median.apply(japan);
 	new Image_window(test);
 	new Image_window(japan);
 
+	Speed_test([&median, &japan]() { median.apply(japan); });
 
 
 	// static stuff

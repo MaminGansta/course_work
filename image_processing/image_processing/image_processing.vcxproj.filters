@@ -57,5 +57,8 @@
     <ClCompile Include="guiAlexandrov\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="operators\median_filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
