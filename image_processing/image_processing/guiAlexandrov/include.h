@@ -1,7 +1,7 @@
 #pragma once
 
-#define safe_release(ptr) (delete *ptr, *ptr = nullptr)
-#define safe_releaseArr(ptr) (delete[] *ptr, *ptr = nullptr)
+#define safe_release(ptr) (delete ptr, ptr = nullptr)
+#define safe_releaseArr(ptr) (delete[] ptr, ptr = nullptr)
 
 void doutput(const char* format, ...)
 {

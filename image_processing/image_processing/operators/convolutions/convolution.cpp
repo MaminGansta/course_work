@@ -1,10 +1,10 @@
 
-inline int my_abs(int value)
-{
-	uint32_t temp = value >> 31;
-	value ^= temp;
-	value += temp & 1;
-	return value;
+#define my_abs(value) \
+{\
+	uint32_t temp = value >> 31;\
+	value ^= temp;				\
+	value += temp & 1;			\
+	return value;				\
 }
 
 

@@ -55,12 +55,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Speed_test([&japan, &h_japan]() { auto_contrast(japan, h_japan); });
 	fImage test = hist_alignment(japan, h_japan);
 
-	new Image_window(test);
-	new Image_window(japan);
+	//new Image_window(test);
+	//new Image_window(japan);
 
 
 	// static stuff
-	//Main_window main_win(L"images");
+	Main_window main_win(L"images");
 
 	Timer timer(true);
 	while (running)

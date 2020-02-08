@@ -100,8 +100,8 @@ struct Image_window : public Window
 				}break;
 				case WM_CLOSE:
 				{
-					safe_release(&window->hist_win);
-					safe_release(&window);
+					safe_release(window->hist_win);
+					safe_release(window);
 				}
 				default:
 				{
