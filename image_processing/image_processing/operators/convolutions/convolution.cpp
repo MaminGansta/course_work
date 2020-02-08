@@ -144,43 +144,51 @@ constexpr int mat_size(size_t sigma)
 	return sigma * 6 + 1;
 }
 
+template <size_t sigma>
+constexpr int gauss_construcor(float kernal[mat_size(sigma)][mat_size(sigma)])
+{
+	size_t size = mat_size(sigma);
+	float A, a, c;
+	float sigma_quad = sigma * sigma;
+	A = 1.0f / (2.0f * PI * sigma_quad);
+	a = c = 1.0f / (2.0f * sigma_quad);
+
+
+	float total = 0;
+	int pad = size / 2;
+	for (int y = -pad; y <= pad; y++)
+	{
+		for (int x = -pad; x <= pad; x++)
+		{
+			float temp = A * expf(-(a * (x * x) + 2 * (abs(x) * abs(y)) + c * (y * y)));
+			kernal[y + pad][x + pad] = temp;
+			total += temp;
+		}
+	}
+
+	// normalize coefs
+	total = 1.0f / total;
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			kernal[i][j] *= total;
+		}
+	}
+
+	return mat_size(sigma);
+}
+
 
 template <size_t sigma>
 struct Gaussian_filter :  Kernal<mat_size(sigma)>
 {
 	using Kernal<mat_size(sigma)>::kernal;
-	int size = mat_size(sigma);
 
-	Gaussian_filter()
-	{
-		float A, a, c;
-		float sigma_quad = sigma * sigma;
-		A = 1.0f / (2.0f * PI * sigma_quad);
-		a = c = 1.0f / (2.0f * sigma_quad);
+	// compile time constructor
+	int size = gauss_construcor<sigma>(kernal);
 
-
-		float total = 0;
-		int pad = size / 2;
-		for (int y = -pad; y <= pad; y++)
-		{
-			for (int x = -pad; x <= pad; x++)
-			{
-				float temp = A * expf(-(a * (x * x) + 2 * (abs(x) * abs(y)) + c * (y * y)));
-				kernal[y + pad][x + pad] = temp;
-				total += temp;
-			}
-		}
-
-		// normalize coefs
-		total = 1.0f / total;
-		for (int i = 0; i < size; i++)
-		{
-			for (int j = 0; j < size; j++)
-			{
-				kernal[i][j] *= total;
-			}
-		}
-	}
+	Gaussian_filter() = default;
 };
 
 

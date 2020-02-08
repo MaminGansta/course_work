@@ -42,13 +42,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Sharp_filter sharp;
 	Median_filter<3> median;
 
+	Histogram h_japan(japan);
+
+	
+	//Speed_test([&gauss, &japan]() { gauss.apply(japan); });
 	//Speed_test([&sharp, &japan]() { sharp.apply(japan); });
-	//fImage test = sharp.apply(japan);
-	fImage test = median.apply(japan);
+	//Speed_test([&median, &japan]() { median.apply(japan); });
+	//fImage test = median.apply(japan);
+
+	//Speed_test([&japan, &h_japan]() { hist_alignment(japan, h_japan); });
+	//Speed_test([&japan, &h_japan]() { gray_world(japan, h_japan); });
+	//Speed_test([&japan, &h_japan]() { auto_contrast(japan, h_japan); });
+	fImage test = hist_alignment(japan, h_japan);
+
 	new Image_window(test);
 	new Image_window(japan);
-
-	Speed_test([&median, &japan]() { median.apply(japan); });
 
 
 	// static stuff
