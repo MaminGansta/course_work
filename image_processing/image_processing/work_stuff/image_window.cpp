@@ -42,7 +42,7 @@ struct Hist_window : public Window
 			}break;
 			case WM_CLOSE:
 			{
-				safe_release(pHist_window);
+				safe_release(*pHist_window);
 				return 0;
 			}break;
 			}

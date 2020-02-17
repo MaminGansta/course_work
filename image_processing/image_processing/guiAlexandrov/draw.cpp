@@ -87,6 +87,6 @@ inline void draw_filled_rect(Canvas& surface, float fx, float fy, float fwidth, 
 		});
 	}
 
-	for (int i = 0; i < MAX_THREADS; i++)
+	for (int i = 0; i < workers.size; i++)
 		res[i].get();
 }
