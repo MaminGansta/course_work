@@ -34,7 +34,7 @@ struct Kernal
 
 	Kernal() = default;
 
-	fImage apply(fImage& original)
+	fImage apply(const fImage& original)
 	{
 		// get RVO
 		fImage res;
@@ -133,6 +133,110 @@ struct Kernal
 	}
 
 
+	// only for brightnes chanel
+	fImage apply_YCbCr(const fImage& original)
+	{
+		fImage res;
+		res.resize(original.width, original.height);
+
+		// main area
+		int pad = size / 2;
+
+		int x0 = pad;
+		int y0 = pad;
+		int width = original.width - pad;
+		int height = original.height - pad;
+
+		for (int y = y0; y < height; y++)
+		{
+			for (int x = x0; x < width; x++)
+			{
+				// rgb(rgba) is bgr(bgra) in windows (i dnk why)
+				//__m128 bgr = { 0.0f, 0.0f, 0.0f, 0.0f };
+				float brightnes = 0.0f;
+				for (int i = 0; i < size; i++)
+				{
+					for (int j = 0; j < size; j++)
+					{
+						//__m128 pixel = _mm_load_ps(&original[(y - pad + i) * original.width + x - pad + j].b);
+						//__m128 coef = _mm_set_ps1(kernal[i][j]);
+						//bgr = _mm_add_ps(bgr, _mm_mul_ps(pixel, coef));
+						brightnes += original[(y - pad + i) * original.width + x - pad + j].Y * kernal[i][j];
+					}
+				}
+				res[y * res.width + x].Y = color_clipf(brightnes);
+				res[y * res.width + x].U = 0.0f;//original[y * res.width + x].U;
+				res[y * res.width + x].V = 0.0f;//original[y * res.width + x].V;
+			}
+		}
+
+
+		// edges
+		for (int i = 0; i < 2; i++)
+		{
+			for (int y = i * (original.height - pad); y < (1 - i) * pad + i * (original.height); y++)
+			{
+				for (int x = 0; x < original.width; x++)
+				{
+					float brightnes = 0.0f;
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = 0; j < size; j++)
+						{
+							int core_y = abs(y - pad + i);
+							int core_x = abs(x - pad + j);
+
+							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+							//__m128 pixel = _mm_load_ps(&original[core_y * original.width + core_x].b);
+							//__m128 coef = _mm_set_ps1(kernal[i][j]);
+							//bgr = _mm_add_ps(bgr, _mm_mul_ps(pixel, coef));
+							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
+
+						}
+					}
+					res[y * res.width + x].Y = color_clipf(brightnes);
+					res[y * res.width + x].U = 0.0f;//original[y * res.width + x].U;
+					res[y * res.width + x].V = 0.0f;//original[y * res.width + x].V;
+				}
+			}
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int y = pad; y < original.height - pad; y++)
+			{
+				for (int x = i * (original.width - pad); x < (1 - i) * pad + i * original.width; x++)
+				{
+					float brightnes = 0.0f;
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = 0; j < size; j++)
+						{
+							int core_y = abs(y - pad + i);
+							int core_x = abs(x - pad + j);
+
+							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+							//__m128 pixel = _mm_load_ps(&original[core_y * original.width + core_x].b);
+							//__m128 coef = _mm_set_ps1(kernal[i][j]);
+							//bgr = _mm_add_ps(bgr, _mm_mul_ps(pixel, coef));
+							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
+						}
+					}
+					res[y * res.width + x].Y = color_clipf(brightnes);
+					res[y * res.width + x].U = 0.0f;//original[y * res.width + x].U;
+					res[y * res.width + x].V = 0.0f;//original[y * res.width + x].V;
+				}
+			}
+		}
+
+		return res;
+	}
+
+
 	float* operator [] (int i) { return kernal[i]; }
 };
 
@@ -198,4 +302,14 @@ struct Sharp_filter : public Kernal<3>
 {
 
 	Sharp_filter() : Kernal({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
+};
+
+struct Sobel_y : public Kernal<3>
+{
+	Sobel_y() : Kernal({ 1, 0 , -1, 2, 0, -2, 1, 0 , -1 }) {}
+};
+
+struct Sobel_x : public Kernal<3>
+{
+	Sobel_x() : Kernal({ 1, 2 , 1, 0, 0, 0, -1, -2 , -1 }) {}
 };

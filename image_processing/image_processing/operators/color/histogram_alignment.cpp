@@ -34,6 +34,8 @@ fImage hist_alignment(fImage& image, Histogram hist)
 
 		// corection
 		Y = float(cdf[int(Y * 255.0f)] - cdf_min) / (count - 1);
+		//float a = float(cdf[int(Y * 255.0f)] - cdf_min) / (count - 1);
+
 
 		res[i].r = color_clipf(Y + 1.2803f * V);
 		res[i].g = color_clipf(Y - 0.2148f * U - 0.4805f * V);

@@ -1,4 +1,7 @@
 
+#define color_clipf(color) (MIN(MAX(color, 0.0f), 1.0f))
+
+
 // ============= standart image ==================
 
 struct Image
@@ -142,6 +145,7 @@ struct fColor
 	union
 	{
 		struct { float b, g, r, a; };
+		struct { float Y, U, V; };
 		float raw[4];
 	};
 
@@ -150,6 +154,16 @@ struct fColor
 	inline fColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) : r(float(r) / 255.0f), g(float(g) / 255.0f), b(float(b) / 255.0f), a(float(a) / 255.0f) {}
 	inline fColor(float color) : r(color), g(color), b(color), a(1.0f) {}
 
+
+	fColor operator +(const fColor& f)
+	{
+		return fColor(r + f.r, g + f.g, b + f.b);
+	}
+
+	fColor operator /(float f)
+	{
+		return fColor(r / f, g / f, b / f);
+	}
 
 	fColor operator *(float f)
 	{
@@ -262,6 +276,13 @@ struct fImage
 		assert((uint32_t)idx < width * height);
 		return data[idx];
 	}
+
+	const fColor& operator [] (int idx) const
+	{
+		assert((uint32_t)idx < width * height);
+		return data[idx];
+	}
+
 
 	fColor& get_pixel_scaled(int x, int y, int screen_w, int screen_h)
 	{

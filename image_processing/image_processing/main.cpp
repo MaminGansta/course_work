@@ -18,6 +18,7 @@ bool running = true;
 #include "guiAlexandrov/include.h"
 
 // work stuff
+#include "operators/image_transform.cpp"
 #include "histogram.cpp"
 
 #include "color/auto_contrast.cpp"
@@ -41,6 +42,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Gaussian_filter<1> gauss;
 	Sharp_filter sharp;
 	Median_filter<3> median;
+	Sobel_y sobel_y;
+	Sobel_x sobel_x;
+
 
 	Histogram h_japan(japan);
 
@@ -54,13 +58,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Speed_test([&japan, &h_japan]() { gray_world(japan, h_japan); });
 	//Speed_test([&japan, &h_japan]() { auto_contrast(japan, h_japan); });
 	fImage test = hist_alignment(japan, h_japan);
+	fImage test2 = auto_contrast(japan, h_japan);
+
+	fImage test3 = YCbCr2RGB(sobel_y.apply_YCbCr(RGB2YCbCr(japan)));
+	fImage test4 = YCbCr2RGB(sobel_x.apply_YCbCr(RGB2YCbCr(japan)));
+	fImage test5(japan.width, japan.height);
+
+	for (int i = 0; i < japan.width * japan.height; i++)
+		test5[i] = (test3[i] + test4[i]) / 2;
+
 
 	//new Image_window(test);
-	//new Image_window(japan);
+	//new Image_window(test2);
+	new Image_window(test3);
+	new Image_window(test4);
+	new Image_window(test5);
+
+	
+	new Image_window(japan);
 
 
 	// static stuff
-	Main_window main_win(L"images");
+	//Main_window main_win(L"images");
 
 	Timer timer(true);
 	while (running)

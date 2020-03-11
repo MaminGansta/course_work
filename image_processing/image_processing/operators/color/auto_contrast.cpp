@@ -1,5 +1,4 @@
 
-#define color_clipf(color) (MIN(MAX(color, 0.0f), 1.0f))
 
 fImage auto_contrast(fImage& image, Histogram& hist)
 {
@@ -7,7 +6,7 @@ fImage auto_contrast(fImage& image, Histogram& hist)
 	res.resize(image.width, image.height);
 
 	// cut 5% from bounds
-	int cut_amount = 0.05f * image.height * image.width;
+	int cut_amount = 0.01f * image.height * image.width;
 	int x_min, x_max;
 
 	// find new bounds
