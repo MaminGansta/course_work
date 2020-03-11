@@ -313,3 +313,18 @@ struct Sobel_x : public Kernal<3>
 {
 	Sobel_x() : Kernal({ 1, 2 , 1, 0, 0, 0, -1, -2 , -1 }) {}
 };
+
+fImage sobel(const fImage& origin)
+{
+	fImage res(origin.width, origin.height);
+	Sobel_y sobel_y;
+	Sobel_x sobel_x;
+
+	fImage sob_x = sobel_y.apply_YCbCr(RGB2YCbCr(origin));
+	fImage sob_y = sobel_x.apply_YCbCr(RGB2YCbCr(origin));
+
+	for (int i = 0; i < origin.width * origin.height; i++)
+		res[i] = (sob_x[i] + sob_y[i]) / 2;
+
+	return YCbCr2RGB(res);
+}

@@ -225,7 +225,7 @@ struct fImage
 		invalid = false;
 	}
 
-	fImage(fImage & copy)
+	fImage(const fImage & copy)
 	{
 		height = copy.height;
 		width = copy.width;
