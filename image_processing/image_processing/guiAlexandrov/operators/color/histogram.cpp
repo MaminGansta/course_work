@@ -1,9 +1,8 @@
 
-#include <string.h>
-
+template <typename Image_type>
 struct Histogram
 {
-	fImage* image = NULL;
+	Image_type* image = NULL;
 	float brightness[256];
 	float red[256];
 	float green[256];
@@ -17,13 +16,13 @@ struct Histogram
 
 	Histogram() {}
 
-	Histogram(fImage& image)
+	Histogram(Image_type& image)
 	{
 		set_img(image);
 		update_info();
 	}
 
-	void set_img(fImage& img)
+	void set_img(Image_type& img)
 	{
 		image = &img;
 	}
@@ -38,7 +37,7 @@ struct Histogram
 		int size = image->width * image->height;
 		for (int i = 0; i < size; i++)
 		{
-			Color color = image->data[i].get_uint();
+			Color color = image->data[i];
 			uint8_t br = (color.r + color.g + color.b) / 3;
 			cbrightness[br]++;
 			cred[color.r]++;
@@ -60,29 +59,4 @@ struct Histogram
 	}
 
 };
-
-void draw_graph(Canvas& surface, float* hist, float pos_x, float pos_y, fColor color)
-{
-	fdraw_line(surface, pos_x, pos_y, pos_x + 0.2f, pos_y, fColor(80));
-	fdraw_line(surface, pos_x, pos_y, pos_x, pos_y + 0.8f, fColor(80));
-
-	float step = 0.2f / 255;
-	for (int i = 0; i < 255; i++)
-	{
-		float height = hist[i] * 40;
-		fdraw_line(surface, pos_x + (i * step), pos_y, pos_x + (i * step), pos_y + height, color);
-	}
-}
-
-void draw_histogram(Canvas& surface, Histogram& hist, float pos_x, float pos_y)
-{
-	// brightness
-	draw_graph(surface, hist.brightness, pos_x, pos_y, Color(250));
-	// red
-	draw_graph(surface, hist.red, pos_x + 0.25f, pos_y, Color(255, 50, 50));
-	// green
-	draw_graph(surface, hist.green, pos_x + 0.5f, pos_y, Color(50, 255, 50));
-	// blue
-	draw_graph(surface, hist.blue, pos_x + 0.75f, pos_y, Color(50, 50, 255));
-}
 

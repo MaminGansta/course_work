@@ -151,22 +151,14 @@ struct Kernal
 		{
 			for (int x = x0; x < width; x++)
 			{
-				// rgb(rgba) is bgr(bgra) in windows (i dnk why)
-				//__m128 bgr = { 0.0f, 0.0f, 0.0f, 0.0f };
 				float brightnes = 0.0f;
 				for (int i = 0; i < size; i++)
-				{
 					for (int j = 0; j < size; j++)
-					{
-						//__m128 pixel = _mm_load_ps(&original[(y - pad + i) * original.width + x - pad + j].b);
-						//__m128 coef = _mm_set_ps1(kernal[i][j]);
-						//bgr = _mm_add_ps(bgr, _mm_mul_ps(pixel, coef));
 						brightnes += original[(y - pad + i) * original.width + x - pad + j].Y * kernal[i][j];
-					}
-				}
+				
 				res[y * res.width + x].Y = color_clipf(brightnes);
-				res[y * res.width + x].U = 0.0f;//original[y * res.width + x].U;
-				res[y * res.width + x].V = 0.0f;//original[y * res.width + x].V;
+				res[y * res.width + x].U = 0.0f;
+				res[y * res.width + x].V = 0.0f;
 			}
 		}
 
@@ -189,16 +181,13 @@ struct Kernal
 							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
 							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
 
-							//__m128 pixel = _mm_load_ps(&original[core_y * original.width + core_x].b);
-							//__m128 coef = _mm_set_ps1(kernal[i][j]);
-							//bgr = _mm_add_ps(bgr, _mm_mul_ps(pixel, coef));
 							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
 
 						}
 					}
 					res[y * res.width + x].Y = color_clipf(brightnes);
-					res[y * res.width + x].U = 0.0f;//original[y * res.width + x].U;
-					res[y * res.width + x].V = 0.0f;//original[y * res.width + x].V;
+					res[y * res.width + x].U = 0.0f;
+					res[y * res.width + x].V = 0.0f;
 				}
 			}
 		}
@@ -219,16 +208,13 @@ struct Kernal
 
 							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
 							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
-
-							//__m128 pixel = _mm_load_ps(&original[core_y * original.width + core_x].b);
-							//__m128 coef = _mm_set_ps1(kernal[i][j]);
-							//bgr = _mm_add_ps(bgr, _mm_mul_ps(pixel, coef));
+							
 							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
 						}
 					}
 					res[y * res.width + x].Y = color_clipf(brightnes);
-					res[y * res.width + x].U = 0.0f;//original[y * res.width + x].U;
-					res[y * res.width + x].V = 0.0f;//original[y * res.width + x].V;
+					res[y * res.width + x].U = 0.0f;
+					res[y * res.width + x].V = 0.0f;
 				}
 			}
 		}
@@ -304,6 +290,9 @@ struct Sharp_filter : public Kernal<3>
 	Sharp_filter() : Kernal({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
 };
 
+
+// ================ Sobel's operator ====================
+
 struct Sobel_y : public Kernal<3>
 {
 	Sobel_y() : Kernal({ 1, 0 , -1, 2, 0, -2, 1, 0 , -1 }) {}
@@ -313,6 +302,7 @@ struct Sobel_x : public Kernal<3>
 {
 	Sobel_x() : Kernal({ 1, 2 , 1, 0, 0, 0, -1, -2 , -1 }) {}
 };
+
 
 fImage sobel(const fImage& origin)
 {
