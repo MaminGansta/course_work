@@ -4,7 +4,7 @@ template <typename Image_type>
 int find_max_bound_pixels(const Image_type& image)
 {
 	// apply extra sharp filter to find all posible bound pixels
-	Image_type new_image = sobel_avg(sharp_filter3x3<Image_type, 5>(image));
+	Image_type new_image = sobel_avg(sharp_filter3x3<Image_type, 5>(hist_alignment(image)));
 
 	int sum = 0;
 	for (int i = 0; i < new_image.width * new_image.height; i++)
@@ -19,24 +19,25 @@ float  find_max_sharpnes(const Image_type& image)
 	// apply extra sharp filter to find all posible bound pixels
 	Image_type new_image = sharp_filter3x3<Image_type, 5>(image);
 
+	
 	float sum = 0.0f;
-	float max_br = 255.0f;
-	for (int i = 1; i < image.height; i++)
+	float max_br = 0.0f;
+	for (int i = 2; i < image.height; i++)
 	{
-		for (int j = 1; j < image.width; j++)
+		for (int j = 2; j < image.width; j++)
 		{
 			if (new_image[i * image.width + j].Y > max_br)
 				max_br = new_image[i * image.width + j].Y;
 
-			float temp = abs(new_image[i * image.width + j - 1].Y - new_image[i * image.width + j].Y);
-			float temp2 = abs(new_image[(i - 1) * image.width + j].Y - new_image[i * image.width + j].Y);
+			float temp = abs(new_image[i * image.width + j - 2].Y - new_image[i * image.width + j].Y);
+			float temp2 = abs(new_image[(i - 2) * image.width + j].Y - new_image[i * image.width + j].Y);
 
 			sum += (temp + temp2) * (temp + temp2);
 		}
 	}
 	sum /= max_br / 2;
-	sum /= (image.width - 1) * (image.height - 1);
-
+	sum /= image.width * image.height;
+	
 	return sum;
 }
 
@@ -68,22 +69,21 @@ float image_rate(const Image_type& image)
 	for (int i = 0; i < sobel_image.width * sobel_image.height; i++)
 		contrast_sum += sobel_image[i].Y;
 
-	float contrast_rate = float(contrast_sum) / (max_bound_pixels * 0.7);
-
-
+	float contrast_rate = float(contrast_sum) / max_bound_pixels;
 	
+
 	// rate sharpnes
 	float sh_sum = 0.0f;
 	float max_br = 0.0f;
-	for (int i = 1; i < image.height; i++)
+	for (int i = 2; i < image.height; i++)
 	{
-		for (int j = 1; j < image.width; j++)
+		for (int j = 2; j < image.width; j++)
 		{
 			if (image[i * image.width + j].Y > max_br)
 				max_br = image[i * image.width + j].Y;
 	
-			float temp = abs(image[i * image.width + j - 1].Y - image[i * image.width + j].Y);
-			float temp2 = abs(image[(i - 1) * image.width + j].Y - image[i * image.width + j].Y);
+			float temp = abs(image[i * image.width + j - 2].Y - image[i * image.width + j].Y);
+			float temp2 = abs(image[(i - 2) * image.width + j].Y - image[i * image.width + j].Y);
 	
 			sh_sum += (temp + temp2) * (temp + temp2);
 		}
@@ -91,7 +91,7 @@ float image_rate(const Image_type& image)
 	sh_sum /= image.width * image.height;
 	sh_sum /= max_br / 2;
 	
-	float shrpnes_rate = sh_sum / (max_sharpnes * 0.3f);
+	float shrpnes_rate = sh_sum / max_sharpnes;
 	
-	return (shrpnes_rate + contrast_rate) / 2.0f;
+	return shrpnes_rate * contrast_rate;
 }
