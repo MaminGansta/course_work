@@ -25,7 +25,12 @@ struct Image_window : Window
 };
 
 template <typename Image_type>
-Image_window<Image_type>* image_window(Image_type& image)
+Image_window<Image_type>* image_window(const Image_type& image)
 {
 	return new Image_window<Image_type>(image);
+}
+
+Image_window<Image>* image_window(const wchar_t* name)
+{
+	return new Image_window<Image>(name);
 }

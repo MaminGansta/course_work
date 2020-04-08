@@ -305,96 +305,6 @@ struct Kernal<fImage, size>
 		return res;
 	}
 
-	// only for brightnes chanel
-	fImage apply_YCbCr(const fImage& original)
-	{
-		fImage res;
-		res.resize(original.width, original.height);
-
-		// main area
-		int pad = size / 2;
-
-		int x0 = pad;
-		int y0 = pad;
-		int width = original.width - pad;
-		int height = original.height - pad;
-
-		for (int y = y0; y < height; y++)
-		{
-			for (int x = x0; x < width; x++)
-			{
-				float brightnes = 0.0f;
-				for (int i = 0; i < size; i++)
-					for (int j = 0; j < size; j++)
-						brightnes += original[(y - pad + i) * original.width + x - pad + j].Y * kernal[i][j];
-				
-				res[y * res.width + x].Y = chanel_clip(brightnes);
-				res[y * res.width + x].U = 0.0f;
-				res[y * res.width + x].V = 0.0f;
-			}
-		}
-
-
-		// edges
-		for (int i = 0; i < 2; i++)
-		{
-			for (int y = i * (original.height - pad); y < (1 - i) * pad + i * (original.height); y++)
-			{
-				for (int x = 0; x < original.width; x++)
-				{
-					float brightnes = 0.0f;
-					for (int i = 0; i < size; i++)
-					{
-						for (int j = 0; j < size; j++)
-						{
-							int core_y = abs(y - pad + i);
-							int core_x = abs(x - pad + j);
-
-							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
-							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
-
-							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
-
-						}
-					}
-					res[y * res.width + x].Y = chanel_clip(brightnes);
-					res[y * res.width + x].U = 0.0f;
-					res[y * res.width + x].V = 0.0f;
-				}
-			}
-		}
-
-		for (int i = 0; i < 2; i++)
-		{
-			for (int y = pad; y < original.height - pad; y++)
-			{
-				for (int x = i * (original.width - pad); x < (1 - i) * pad + i * original.width; x++)
-				{
-					float brightnes = 0.0f;
-					for (int i = 0; i < size; i++)
-					{
-						for (int j = 0; j < size; j++)
-						{
-							int core_y = abs(y - pad + i);
-							int core_x = abs(x - pad + j);
-
-							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
-							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
-							
-							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
-						}
-					}
-					res[y * res.width + x].Y = chanel_clip(brightnes);
-					res[y * res.width + x].U = 0.0f;
-					res[y * res.width + x].V = 0.0f;
-				}
-			}
-		}
-
-		return res;
-	}
-
-
 	float* operator [] (int i) { return kernal[i]; }
 };
 
@@ -698,97 +608,6 @@ struct Kernal<Image, size>
 		return res;
 	}
 
-
-	// only for brightnes chanel
-	Image apply_YCbCr(const Image& original)
-	{
-		Image res;
-		res.resize(original.width, original.height);
-	
-		// main area
-		int pad = size / 2;
-	
-		int x0 = pad;
-		int y0 = pad;
-		int width = original.width - pad;
-		int height = original.height - pad;
-	
-		for (int y = y0; y < height; y++)
-		{
-			for (int x = x0; x < width; x++)
-			{
-				int brightnes = 0;
-				for (int i = 0; i < size; i++)
-					for (int j = 0; j < size; j++)
-						brightnes += original[(y - pad + i) * original.width + x - pad + j].Y * kernal[i][j];
-	
-				res[y * res.width + x].Y = chanel_clip(brightnes / coef);
-				res[y * res.width + x].U = 0;
-				res[y * res.width + x].V = 0;
-			}
-		}
-	
-	
-		// edges
-		for (int i = 0; i < 2; i++)
-		{
-			for (int y = i * (original.height - pad); y < (1 - i) * pad + i * (original.height); y++)
-			{
-				for (int x = 0; x < original.width; x++)
-				{
-					int brightnes = 0;
-					for (int i = 0; i < size; i++)
-					{
-						for (int j = 0; j < size; j++)
-						{
-							int core_y = abs(y - pad + i);
-							int core_x = abs(x - pad + j);
-	
-							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
-							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
-	
-							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
-	
-						}
-					}
-					res[y * res.width + x].Y = chanel_clip(brightnes / coef);
-					res[y * res.width + x].U = 0;
-					res[y * res.width + x].V = 0;
-				}
-			}
-		}
-	
-		for (int i = 0; i < 2; i++)
-		{
-			for (int y = pad; y < original.height - pad; y++)
-			{
-				for (int x = i * (original.width - pad); x < (1 - i) * pad + i * original.width; x++)
-				{
-					int brightnes = 0;
-					for (int i = 0; i < size; i++)
-					{
-						for (int j = 0; j < size; j++)
-						{
-							int core_y = abs(y - pad + i);
-							int core_x = abs(x - pad + j);
-	
-							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
-							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
-	
-							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
-						}
-					}
-					res[y * res.width + x].Y = chanel_clip(brightnes / coef);
-					res[y * res.width + x].U = 0;
-					res[y * res.width + x].V = 0;
-				}
-			}
-		}
-	
-		return res;
-	}
-	
-	
 	float* operator [] (int i) { return kernal[i]; }
 };
 
@@ -804,7 +623,6 @@ Kernal<Image_type, sizeF> new_kernal(const Kernal<Image_type, sizeF>& f, const K
 
 
 //	=================================== FILTERS =====================================
-
 
 
 // ====================== Gaussian filter ===========================
@@ -869,45 +687,91 @@ Image_type gauss_filter(const Image_type& image)
 
 
 // =================== Sharp filter ====================
-template <typename Image_type, size_t type = 1>
-struct Sharp_filter;
 
-template <typename Image_type>
-struct Sharp_filter<Image_type, 1>: public Kernal<Image_type, 3>
+template <typename Image_type, size_t size = 3>
+struct Sharp_filter : Kernal<Image_type, size>
 {
-	Sharp_filter() : Kernal<Image_type, 3>({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
+	using Kernal<Image_type, size>::Kernal_init;
+
+	Sharp_filter()
+	{
+		float kernal[size][size];
+		int center = size / 2;
+		float total = 1.0f;
+
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
+			{
+				if (i == center && j == center) continue;
+				total += kernal[i][j] = -1.0f / ((abs(i - center) + abs(j - center) + size) * size);
+			}
+		}
+				
+		kernal[center][center] = 1.0f;
+
+		// normalize coefs
+		total = 1.0f / total;
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+				kernal[i][j] *= total;
+
+		Kernal_init(kernal);
+	}
+
 };
 
-template <typename Image_type>
-struct Sharp_filter<Image_type, 2> : public Kernal<Image_type, 3>
-{
-	Sharp_filter() : Kernal<Image_type, 3>({ -0.25f, -0.25f, -0.25f ,-0.25f, 3.0f, -0.25f ,-0.25f, -0.25f, -0.25f }) {}
-};
 
-template <typename Image_type>
-struct Sharp_filter<Image_type, 3> : public Kernal<Image_type, 3>
-{
-	Sharp_filter() : Kernal<Image_type, 3>({ -0.25f, -0.5f, -0.25f ,-0.5f, 4.0f, -0.5f ,-0.25f, -0.5f, -0.25f }) {}
-};
-
-template <typename Image_type>
-struct Sharp_filter<Image_type, 4> : public Kernal<Image_type, 3>
-{
-	Sharp_filter() : Kernal<Image_type, 3>({ -0.3f, -0.5f, -0.3f ,-0.5f, 4.2f, -0.5f ,-0.3f, -0.5f, -0.3f }) {}
-};
-
-template <typename Image_type>
-struct Sharp_filter<Image_type, 5> : public Kernal<Image_type, 3>
-{
-	Sharp_filter() : Kernal<Image_type, 3>({ -1.0f, -1.0f, -1.0f ,-1.0f, 9.0f, -1.0f ,-1.0f, -1.0f, -1.0f }) {}
-};
-
-
-
-template <typename Image_type, size_t type = 1>
+template <typename Image_type, size_t size = 3>
 Image_type sharp_filter(const Image_type& image)
 {
-	Sharp_filter<Image_type, type> sf;
+	Sharp_filter<Image_type, size> sf;
+	return sf.apply(image);
+}
+
+
+template <typename Image_type, size_t type = 1>
+struct Sharp_filter3x3;
+
+template <typename Image_type>
+struct Sharp_filter3x3<Image_type, 1>: public Kernal<Image_type, 3>
+{
+	Sharp_filter3x3() : Kernal<Image_type, 3>({ -0.1f, -0.2f, -0.1f ,-0.2f, 2.2f, -0.2f ,-0.1f, -0.2f, -0.1f }){}
+};
+
+template <typename Image_type>
+struct Sharp_filter3x3<Image_type, 2> : public Kernal<Image_type, 3>
+{
+	Sharp_filter3x3() : Kernal<Image_type, 3>({ -0.25f, -0.25f, -0.25f ,-0.25f, 3.0f, -0.25f ,-0.25f, -0.25f, -0.25f }) {}
+};
+
+template <typename Image_type>
+struct Sharp_filter3x3<Image_type, 3> : public Kernal<Image_type, 3>
+{
+	Sharp_filter3x3() : Kernal<Image_type, 3>({ -0.25f, -0.5f, -0.25f ,-0.5f, 4.0f, -0.5f ,-0.25f, -0.5f, -0.25f }) {}
+};
+
+
+template <typename Image_type>
+struct Sharp_filter3x3<Image_type, 4> : public Kernal<Image_type, 3>
+{
+	Sharp_filter3x3() : Kernal<Image_type, 3>({ -0.3f, -0.5f, -0.3f ,-0.5f, 4.2f, -0.5f ,-0.3f, -0.5f, -0.3f }) {}
+};
+
+
+template <typename Image_type>
+struct Sharp_filter3x3<Image_type, 5> : public Kernal<Image_type, 3>
+{
+	Sharp_filter3x3() : Kernal<Image_type, 3>({ -1.0f, -1.0f, -1.0f ,-1.0f, 9.0f, -1.0f ,-1.0f, -1.0f, -1.0f }) {}
+};
+
+
+
+
+template <typename Image_type, size_t type = 1>
+Image_type sharp_filter3x3(const Image_type& image)
+{
+	Sharp_filter3x3<Image_type, type> sf;
 	return sf.apply(image);
 }
 
@@ -928,7 +792,6 @@ struct Sobel_x : public Kernal<Image_type, 3>
 	Sobel_x() : Kernal<Image_type, 3>({ 1, 2 , 1, 0, 0, 0, -1, -2 , -1 }) {}
 };
 
-
 template <typename Image_type>
 Image_type sobel(const Image_type& origin)
 {
@@ -936,13 +799,13 @@ Image_type sobel(const Image_type& origin)
 	Sobel_y<Image_type> sobel_y;
 	Sobel_x<Image_type> sobel_x;
 
-	Image_type sob_x = sobel_y.apply_YCbCr(RGB2YCbCr(origin));
-	Image_type sob_y = sobel_x.apply_YCbCr(RGB2YCbCr(origin));
+	Image_type sob_x = sobel_y.apply(RGB2BW(origin));
+	Image_type sob_y = sobel_x.apply(RGB2BW(origin));
 
 	for (int i = 0; i < origin.width * origin.height; i++)
-		res[i] = (sob_x[i] + sob_y[i]);
+		res[i] = sob_x[i] + sob_y[i];
 
-	return YCbCr2RGB(res);
+	return res;
 }
 
 template <typename Image_type>
@@ -952,16 +815,14 @@ Image_type sobel_avg(const Image_type& origin)
 	Sobel_y<Image_type> sobel_y;
 	Sobel_x<Image_type> sobel_x;
 
-	Image_type sob_x = sobel_y.apply_YCbCr(RGB2YCbCr(origin));
-	Image_type sob_y = sobel_x.apply_YCbCr(RGB2YCbCr(origin));
+	Image_type sob_x = sobel_y.apply(RGB2BW(origin));
+	Image_type sob_y = sobel_x.apply(RGB2BW(origin));
 
 	for (int i = 0; i < origin.width * origin.height; i++)
 		res[i] = (sob_x[i] / 2 + sob_y[i] / 2);
 
-	return YCbCr2RGB(res);
+	return res;
 }
-
-
 
 
 // =============== Box filter =======================
