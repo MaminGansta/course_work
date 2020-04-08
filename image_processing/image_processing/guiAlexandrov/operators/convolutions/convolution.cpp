@@ -305,6 +305,97 @@ struct Kernal<fImage, size>
 		return res;
 	}
 
+
+	// only for brightnes chanel
+	fImage apply_YCbCr(const fImage& original)
+	{
+		fImage res;
+		res.resize(original.width, original.height);
+
+		// main area
+		int pad = size / 2;
+
+		int x0 = pad;
+		int y0 = pad;
+		int width = original.width - pad;
+		int height = original.height - pad;
+
+		for (int y = y0; y < height; y++)
+		{
+			for (int x = x0; x < width; x++)
+			{
+				float brightnes = 0.0f;
+				for (int i = 0; i < size; i++)
+					for (int j = 0; j < size; j++)
+						brightnes += original[(y - pad + i) * original.width + x - pad + j].Y * kernal[i][j];
+
+				res[y * res.width + x].Y = chanel_clip(brightnes);
+				res[y * res.width + x].U = original[y * res.width + x].U;
+				res[y * res.width + x].V = original[y * res.width + x].V;
+			}
+		}
+
+
+		// edges
+		for (int i = 0; i < 2; i++)
+		{
+			for (int y = i * (original.height - pad); y < (1 - i) * pad + i * (original.height); y++)
+			{
+				for (int x = 0; x < original.width; x++)
+				{
+					float brightnes = 0.0f;
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = 0; j < size; j++)
+						{
+							int core_y = abs(y - pad + i);
+							int core_x = abs(x - pad + j);
+
+							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
+
+						}
+					}
+					res[y * res.width + x].Y = chanel_clip(brightnes);
+					res[y * res.width + x].U = original[y * res.width + x].U;
+					res[y * res.width + x].V = original[y * res.width + x].V;
+				}
+			}
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int y = pad; y < original.height - pad; y++)
+			{
+				for (int x = i * (original.width - pad); x < (1 - i) * pad + i * original.width; x++)
+				{
+					float brightnes = 0.0f;
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = 0; j < size; j++)
+						{
+							int core_y = abs(y - pad + i);
+							int core_x = abs(x - pad + j);
+
+							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
+						}
+					}
+					res[y * res.width + x].Y = chanel_clip(brightnes);
+					res[y * res.width + x].U = original[y * res.width + x].U;
+					res[y * res.width + x].V = original[y * res.width + x].V;
+				}
+			}
+		}
+
+		return res;
+	}
+
+
 	float* operator [] (int i) { return kernal[i]; }
 };
 
@@ -604,6 +695,96 @@ struct Kernal<Image, size>
 
 		for (int i = 0; i < workers.size; i++)
 			threads[i].get();
+
+		return res;
+	}
+
+
+	// only for brightnes chanel
+	Image apply_YCbCr(const Image& original)
+	{
+		Image res;
+		res.resize(original.width, original.height);
+
+		// main area
+		int pad = size / 2;
+
+		int x0 = pad;
+		int y0 = pad;
+		int width = original.width - pad;
+		int height = original.height - pad;
+
+		for (int y = y0; y < height; y++)
+		{
+			for (int x = x0; x < width; x++)
+			{
+				int brightnes = 0;
+				for (int i = 0; i < size; i++)
+					for (int j = 0; j < size; j++)
+						brightnes += original[(y - pad + i) * original.width + x - pad + j].Y * kernal[i][j];
+
+				res[y * res.width + x].Y = chanel_clip(brightnes / coef);
+				res[y * res.width + x].U = original[y * res.width + x].U;
+				res[y * res.width + x].V = original[y * res.width + x].V;
+			}
+		}
+
+
+		// edges
+		for (int i = 0; i < 2; i++)
+		{
+			for (int y = i * (original.height - pad); y < (1 - i) * pad + i * (original.height); y++)
+			{
+				for (int x = 0; x < original.width; x++)
+				{
+					int brightnes = 0;
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = 0; j < size; j++)
+						{
+							int core_y = abs(y - pad + i);
+							int core_x = abs(x - pad + j);
+
+							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
+
+						}
+					}
+					res[y * res.width + x].Y = chanel_clip(brightnes / coef);
+					res[y * res.width + x].U = original[y * res.width + x].U;
+					res[y * res.width + x].V = original[y * res.width + x].V;
+				}
+			}
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int y = pad; y < original.height - pad; y++)
+			{
+				for (int x = i * (original.width - pad); x < (1 - i) * pad + i * original.width; x++)
+				{
+					int brightnes = 0;
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = 0; j < size; j++)
+						{
+							int core_y = abs(y - pad + i);
+							int core_x = abs(x - pad + j);
+
+							if (core_x >= original.width) core_x = original.width - (core_x - original.width) - 1;
+							if (core_y >= original.height) core_y = original.height - (core_y - original.height) - 1;
+
+							brightnes += original[core_y * original.width + core_x].Y * kernal[i][j];
+						}
+					}
+					res[y * res.width + x].Y = chanel_clip(brightnes / coef);
+					res[y * res.width + x].U = original[y * res.width + x].U;
+					res[y * res.width + x].V = original[y * res.width + x].V;
+				}
+			}
+		}
 
 		return res;
 	}
