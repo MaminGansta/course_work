@@ -869,7 +869,7 @@ Image_type gauss_filter(const Image_type& image)
 
 // =================== Sharp filter ====================
 
-template <typename Image_type, size_t size = 3>
+template <typename Image_type, size_t size = 3, size_t sharp = 2>
 struct Sharp_filter : Kernal<Image_type, size>
 {
 	using Kernal<Image_type, size>::Kernal_init;
@@ -885,14 +885,14 @@ struct Sharp_filter : Kernal<Image_type, size>
 			for (int j = 0; j < size; j++)
 			{
 				if (i == center && j == center) continue;
-				total += kernal[i][j] = -1.0f / ((abs(i - center) + abs(j - center) + size) * size);
+				total += kernal[i][j] = -1.0f / (pow(abs(i - center), sharp) + pow(abs(j - center), sharp));
 			}
 		}
 				
-		kernal[center][center] = 1.0f;
+		kernal[center][center] = -2 * total;
 
-		// normalize coefs
-		total = 1.0f / total;
+		//// normalize coefs
+		total = -1.2f / total;
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				kernal[i][j] *= total;
@@ -903,10 +903,10 @@ struct Sharp_filter : Kernal<Image_type, size>
 };
 
 
-template <typename Image_type, size_t size = 3>
+template <typename Image_type, size_t size = 3, size_t sharp = 2>
 Image_type sharp_filter(const Image_type& image)
 {
-	Sharp_filter<Image_type, size> sf;
+	Sharp_filter<Image_type, size, sharp> sf;
 	return sf.apply(image);
 }
 

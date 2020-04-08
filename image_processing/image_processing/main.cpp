@@ -6,8 +6,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	al_init(hInstance);
 
-	Image japan(L"images/japan.jpg");
-	japan = RGB2BW(japan);
+	fImage japan(L"images/japan2.jpg");
+	//japan = japan;
 
 	Sharp_filter<Image, 3> sh;
 	Sharp_filter<Image, 5> sh2;
@@ -21,7 +21,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//japan2 = sobel_avg(japan2);
 
 	auto japan2 = box_filter<Image, 5>(japan);
-	auto japan3 = sharp_filter3x3<Image, 4>(japan);
+	auto japan3 = sharp_filter3x3<Image, 3>(japan);
+
+
+	//auto japan4 = gauss_filter(auto_contrast(japan));
+	auto japan4 = sharp_filter<fImage, 7, 2>(japan);
+
 	//auto japan2 = sobel_avg(japan);
 	//auto japan3 = sobel_avg(sh2.apply(japan));
 	//auto japan4 = sobel_avg(sharp_filter3x3<Image, 5>(japan));
@@ -30,16 +35,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	output("%f\n", get_time() - time);
 
 	preapare(japan);
+
+
 	float res = image_rate(japan);
-	float res2= image_rate(japan2);
+
+
+	time = get_time();
+
+	float res2 = image_rate(japan2);
+
+	output("%f\n", get_time() - time);
+
 	float res3 = image_rate(japan3);
 
 	
 	image_window(japan);
 	image_window(japan2);
 	image_window(japan3);
-	//image_window(japan3);
-	//image_window(japan4);
+	image_window(japan4);
 
 
 

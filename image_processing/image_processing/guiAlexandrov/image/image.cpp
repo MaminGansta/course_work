@@ -208,7 +208,7 @@ struct fColor
 
 	operator Color() const
 	{
-		return Color(r * 255.0f, g * 255.0f, b * 255.0f, a * 255.0f);
+		return Color(chanel_clip<int>(r * 255.0f), chanel_clip<int>(g * 255.0f), chanel_clip<int>(b * 255.0f), chanel_clip<int>(a * 255.0f));
 	}
 };
 
