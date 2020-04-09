@@ -878,25 +878,19 @@ struct Sharp_filter : Kernal<Image_type, size>
 	{
 		float kernal[size][size];
 		int center = size / 2;
-		float total = 1.0f;
+		float total = 0.0f;
+		float sharp_norm = float(sharp) / 10.0f;
 
 		for (int i = 0; i < size; i++)
 		{
 			for (int j = 0; j < size; j++)
 			{
 				if (i == center && j == center) continue;
-				total += kernal[i][j] = -1.0f / (pow(abs(i - center), sharp) + pow(abs(j - center), sharp));
+				total += kernal[i][j] = -sharp_norm / pow(abs(i - center) + abs(j - center), size);
 			}
 		}
 				
-		kernal[center][center] = -2 * total;
-
-		//// normalize coefs
-		total = -1.2f / total;
-		for (int i = 0; i < size; i++)
-			for (int j = 0; j < size; j++)
-				kernal[i][j] *= total;
-
+		kernal[center][center] = -total + 1;
 		Kernal_init(kernal);
 	}
 
