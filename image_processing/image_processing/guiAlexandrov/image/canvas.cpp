@@ -33,11 +33,20 @@ struct Color
 		return Color(r / f, g / f, b / f);
 	}
 
-	Color operator *=(float f)
+	Color& operator += (const Color& other)
+	{
+		r = min(r + other.r, 255);
+		g = min(g + other.g, 255);
+		b = min(b + other.b, 255);
+		return *this;
+	}
+
+	Color& operator *=(float f)
 	{
 		r *= f;
 		g *= f;
 		b *= f;
+		return *this;
 	}
 
 };

@@ -10,6 +10,18 @@ void drawPixel(Image_type& surface, int x, int y, Color_type color)
 	surface[y * surface.width + x] = color;
 }
 
+template <typename Image_type, typename Color_type>
+void drawPixel(Image_type& surface, int x, int y, Color_type color, int width)
+{
+	int half_width = width / 2 + 1;
+	if ((uint32_t)(y - half_width) >= surface.height || (uint32_t)(x - half_width) >= surface.width) return;
+	if ((uint32_t)(y + half_width) >= surface.height || (uint32_t)(x + half_width) >= surface.width) return;
+
+	for (int i = -half_width; i < half_width; i++)
+		for (int j = -half_width; j < half_width; j++)
+			surface[(y + i) * surface.width + x + j] = color;
+}
+
 
 template <typename Image_type, typename Color_type>
 void addPixel(Image_type& surface, int x, int y, Color_type color)
@@ -20,7 +32,21 @@ void addPixel(Image_type& surface, int x, int y, Color_type color)
 
 
 template <typename Image_type, typename Color_type>
-void drawLine(Image_type& surface, int x, int y, int x2, int y2, Color_type color)
+void addPixel(Image_type& surface, int x, int y, Color_type color, int width)
+{
+	int half_width = width / 2 + 1;
+	if ((uint32_t)(y - half_width) >= surface.height || (uint32_t)(x - half_width) >= surface.width) return;
+	if ((uint32_t)(y + half_width) >= surface.height || (uint32_t)(x + half_width) >= surface.width) return;
+
+	for (int i = -half_width; i < half_width; i++)
+		for (int j = -half_width; j < half_width; j++)
+			surface[(y + i) * surface.width + x + j] += color * (1.0f / (1 + i * i + j * j));
+}
+
+
+
+template <typename Image_type, typename Color_type>
+void drawLine(Image_type& surface, int x, int y, int x2, int y2, Color_type color, int width = 1)
 {
 	bool yLonger = false;
 	int shortLen = y2 - y;
@@ -39,14 +65,14 @@ void drawLine(Image_type& surface, int x, int y, int x2, int y2, Color_type colo
 		if (longLen > 0) {
 			longLen += y;
 			for (int j = 0x8000 + (x << 16); y <= longLen; ++y) {
-				drawPixel(surface, j >> 16, y, color);
+				drawPixel(surface, j >> 16, y, color, width);
 				j += decInc;
 			}
 			return;
 		}
 		longLen += y;
 		for (int j = 0x8000 + (x << 16); y >= longLen; --y) {
-			drawPixel(surface, j >> 16, y, color);
+			drawPixel(surface, j >> 16, y, color, width);
 			j -= decInc;
 		}
 		return;
@@ -55,27 +81,102 @@ void drawLine(Image_type& surface, int x, int y, int x2, int y2, Color_type colo
 	if (longLen > 0) {
 		longLen += x;
 		for (int j = 0x8000 + (y << 16); x <= longLen; ++x) {
-			drawPixel(surface, x, j >> 16, color);
+			drawPixel(surface, x, j >> 16, color, width);
 			j += decInc;
 		}
 		return;
 	}
 	longLen += x;
 	for (int j = 0x8000 + (y << 16); x >= longLen; --x) {
-		drawPixel(surface, x, j >> 16, color);
+		drawPixel(surface, x, j >> 16, color, width);
 		j -= decInc;
 	}
 }
 
 
 template <typename Image_type, typename Color_type>
-void draw_line(Image_type& surface, float fx0, float fy0, float fx1, float fy1, Color_type color)
+void addLine(Image_type& surface, int x, int y, int x2, int y2, Color_type color, int width = 1)
+{
+	bool yLonger = false;
+	int shortLen = y2 - y;
+	int longLen = x2 - x;
+	if (abs(shortLen) > abs(longLen)) {
+		int swap = shortLen;
+		shortLen = longLen;
+		longLen = swap;
+		yLonger = true;
+	}
+	int decInc;
+	if (longLen == 0) decInc = 0;
+	else decInc = (shortLen << 16) / longLen;
+
+	if (yLonger) {
+		if (longLen > 0) {
+			longLen += y;
+			for (int j = 0x8000 + (x << 16); y <= longLen; ++y) {
+				addPixel(surface, j >> 16, y, color, width);
+				j += decInc;
+			}
+			return;
+		}
+		longLen += y;
+		for (int j = 0x8000 + (x << 16); y >= longLen; --y) {
+			addPixel(surface, j >> 16, y, color, width);
+			j -= decInc;
+		}
+		return;
+	}
+
+	if (longLen > 0) {
+		longLen += x;
+		for (int j = 0x8000 + (y << 16); x <= longLen; ++x) {
+			addPixel(surface, x, j >> 16, color, width);
+			j += decInc;
+		}
+		return;
+	}
+	longLen += x;
+	for (int j = 0x8000 + (y << 16); x >= longLen; --x) {
+		addPixel(surface, x, j >> 16, color, width);
+		j -= decInc;
+	}
+}
+
+
+template <typename Image_type, typename Color_type>
+void draw_line(Image_type& surface, float fx0, float fy0, float fx1, float fy1, Color_type color, int width = 1)
 {
 	int x0 = fx0 * surface.width;
 	int y0 = fy0 * surface.height;
 	int x1 = fx1 * surface.width;
 	int y1 = fy1 * surface.height;
-	drawLine(surface, x0, y0, x1, y1, color);
+	drawLine(surface, x0, y0, x1, y1, color, width);
+}
+
+template <typename Image_type, typename Color_type>
+void add_line(Image_type& surface, float fx0, float fy0, float fx1, float fy1, Color_type color, int width = 1)
+{
+	int x0 = fx0 * surface.width;
+	int y0 = fy0 * surface.height;
+	int x1 = fx1 * surface.width;
+	int y1 = fy1 * surface.height;
+	addLine(surface, x0, y0, x1, y1, color, width);
+}
+
+
+
+template <typename Image_type, typename Color_type>
+void draw_filled_circle(Image_type& surface, float fx, float fy, Color_type color, float fradius)
+{
+	int x = fx * surface.width;
+	int y = fy * surface.height;
+	int radius = (surface.width / 2) * fradius;
+	if ((uint32_t)y >= surface.height || (uint32_t)x >= surface.width) return;
+
+	for (int i = -radius; i < radius; i++)
+		for (int j = -radius; j < radius; j++)
+			if (i * i + j * j < radius * radius)
+				drawPixel(surface, x + i, y + j, color);
 }
 
 
