@@ -553,6 +553,11 @@ struct CheckBox : Component
 		components.add(parent, this);
 	}
 
+	bool checked()
+	{
+		return SendMessage(handle, BM_GETCHECK, 0, 0) == BST_CHECKED;
+	}
+
 };
 
 // =================== ComboBox ========================

@@ -30,40 +30,16 @@
     <ClCompile Include="massage_handlers\histogram_msg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="work_stuff\histogram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="layout\draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="operators\color\auto_contrast.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="operators\color\gray_world.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="operators\color\histogram_alignment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="work_stuff\image_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="work_stuff\main_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="operators\convolutions\convolution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="guiAlexandrov\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="operators\median_filter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="operators\image_transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="image_rate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_alg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

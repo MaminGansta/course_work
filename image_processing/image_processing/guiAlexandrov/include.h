@@ -22,11 +22,22 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <cstdio>
 #include <wchar.h>
 #include <tchar.h>
+#include <cmath>
+#include <malloc.h>
+
 
 #include <array>
 #include <vector>
 #include <algorithm>
 #include <functional>
+
+#include <cassert>
+#include <utility>
+#include <string>
+#include <random>
+#include <limits.h>
+#include <chrono>
+#include <thread>
 
 
 void doutput(const char* format, ...)

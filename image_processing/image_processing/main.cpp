@@ -1,65 +1,24 @@
-#define MAX_THREADS 8
+#define MAX_THREADS 4
 #include "guiAlexandrov/include.h"
 #include "image_rate.cpp"
+#include "gen_alg.cpp"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	al_init(hInstance);
 
-	//fImage japan(L"images/japan.jpg");
-	//if (japan.invalid) return 1;
-	//image_window(japan);
-	//
-	//
-	////Sharp_filter<fImage, 3> sh;
-	////Sharp_filter<fImage, 5> sh2;
-	//
-	//float time = get_time();
-	//
-	////japan = box_filter(japan);
-	////auto kernal = new_kernal(Sharp_filter<Image, 3>(), Sharp_filter<Image, 3>());
-	//
-	////japan = sobel_avg(japan);
-	////japan2 = sobel_avg(japan2);
-	//
-	////auto japan2 = box_filter<fImage, 5>(japan);
-	////auto japan3 = sharp_filter3x3<fImage, 3>(japan);
-	//
-	//
-	//auto japan4 = japan;// auto_contrast(japan, 0.01f);
-	////japan4 = sharp_filter3x3<fImage, 3>(japan4);
-	//japan4 = sharp_filter<fImage, 3, 32>(japan4);
-	//
-	//japan = sharp_filter<fImage, 7, 32>(japan);
-	//
-	////auto japan2 = sobel_avg(japan);
-	////auto japan3 = sobel_avg(sh2.apply(japan));
-	////auto japan4 = sobel_avg(sharp_filter3x3<Image, 5>(japan));
-	//
-	//output("%f\n", get_time() - time);
-	//
-	//preapare(japan);
-	//float res = image_rate(japan);
-	////float res2 = image_rate(japan2);
-	////float res3 = image_rate(japan3);
-	//float res4 = image_rate(japan4);
-	//
-	//output("%f\n", get_time() - time);
-	//
-	//
-	//image_window(japan);
-	////image_window(japan2);
-	////image_window(japan3);
-	//image_window(japan4);
 
+	fImage image(L"images/low_contrast9.jpg");
+	if (image.invalid) return 0;
 
-	Image image(600, 600);
+	image_bread<fImage>::set_image((image));
 
-	draw_line(image, 0, 0, 0.5f, 0.5f, Color(255, 255, 0), 3);
-	draw_filled_circle(image, 0.5f, 0.5f, Color(255), 0.1f);
+	const int size = 4;
+	small::array<image_bread<fImage>, size> first_generation(size, { 0u, 0u });
 
-	image_window(image);
+	auto [generation, best_id] = gen_alg(first_generation, 10);
 
+	//image_window(generation[best_id].apply());
 
 	Window::wait_msg_proc();
 	return 0;
