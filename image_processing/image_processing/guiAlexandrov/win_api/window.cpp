@@ -718,7 +718,7 @@ struct Label : Component
 };
 
 // ========================= Text ================================
-#define DEF_EDIT  WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL
+#define DEF_TEXT WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL
 
 struct Text : Component
 {
@@ -744,12 +744,12 @@ struct Text : Component
 
 	Text& operator= (const Text& text) { init(text.parent, text.x, text.y, text.width, text.height, text.type, text.style); return *this; }
 
-	Text(HWND parent, float x, float y, float width = 0.1f, float height = 0.1f, UINT type = DYNAMIC, UINT style = DEF_EDIT)
+	Text(HWND parent, float x, float y, float width = 0.1f, float height = 0.1f, UINT type = DYNAMIC, UINT style = DEF_TEXT)
 	{
 		init(parent, x, y, width, height, type, style);
 	}
 
-	void init(HWND parent, float x, float y, float width = 0.1f, float height = 0.1f, UINT type = DYNAMIC, UINT style = DEF_EDIT)
+	void init(HWND parent, float x, float y, float width = 0.1f, float height = 0.1f, UINT type = DYNAMIC, UINT style = DEF_TEXT)
 	{
 		text = (TCHAR*)::operator new(cap * sizeof(TCHAR));
 

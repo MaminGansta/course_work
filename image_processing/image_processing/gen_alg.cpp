@@ -133,12 +133,30 @@ std::tuple<small::array<bread, size>, int> evolution(const small::array<bread, s
 	float fitnes_total = 0;
 	float fitnes_avg = 0;
 
+
 	// calculate fitnes value
+
+	// single thread
+	//for (int i = 0; i < size; i++)
+	//{
+	//	fitnes_value[i] = bread::fitnes(priv_generation[i]);
+	//	fitnes_total += fitnes_value[i];
+	//}
+
+	// multi thread
+	std::future<void> threads[size];
 	for (int i = 0; i < size; i++)
 	{
-		fitnes_value[i] = bread::fitnes(priv_generation[i]);
-		fitnes_total += fitnes_value[i];
+		threads[i] = workers.add_task([&, i]()
+			{
+				fitnes_value[i] = bread::fitnes(priv_generation[i]);
+				fitnes_total += fitnes_value[i];
+			});
 	}
+	
+	for (int i = 0; i < size; i++)
+		threads[i].get();
+
 
 	// check was result reached or not
 	for (int i = 0; i < size; i++)
@@ -213,7 +231,7 @@ std::tuple<small::array<bread, size>, int> evolution(const small::array<bread, s
 
 // core
 template <typename bread, size_t size>
-std::tuple<small::array<bread, size>, int> gen_alg(const small::array<bread, size>& start, int steps = 10)
+std::tuple<small::array<bread, size>, int> gen_alg(const small::array<bread, size>& start, int steps = 10, bool show_step = false)
 {
 	srand(time(0));
 	int time = 0;
@@ -227,7 +245,10 @@ std::tuple<small::array<bread, size>, int> gen_alg(const small::array<bread, siz
 		auto [ret_step, finish] = evolution(step);
 		step = ret_step;
 		if (finish >= 0) return { step, finish };
-		image_window(step[0].apply());
+		
+		if (show_step)
+			image_window(step[0].apply());
+
 		time++;
 	}
 
