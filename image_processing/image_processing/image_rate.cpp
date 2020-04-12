@@ -4,7 +4,7 @@ template <typename Image_type>
 int find_max_bound_pixels(const Image_type& image)
 {
 	// apply extra sharp filter to find all posible bound pixels
-	Image_type new_image = sobel_avg(sharp_filter3x3<Image_type, 5>(auto_contrast(image)));
+	Image_type new_image = sobel_avg(sharp_filter3x3<Image_type, 5>(hist_alignment(image)));
 
 	int sum = 0;
 	for (int i = 0; i < new_image.width * new_image.height; i++)
@@ -68,7 +68,7 @@ float image_rate(const Image_type& image)
 	for (int i = 0; i < sobel_image.width * sobel_image.height; i++)
 		contrast_sum += sobel_image[i].Y;
 
-	float contrast_rate = float(contrast_sum) / max_bound_pixels;
+	float contrast_rate = float(contrast_sum) / (max_bound_pixels * 0.5f);
 	
 
 	// rate sharpnes
@@ -90,7 +90,7 @@ float image_rate(const Image_type& image)
 	sh_sum /= image.width * image.height;
 	sh_sum /= max_br / 2;
 	
-	float shrpnes_rate = sh_sum / max_sharpnes;
+	float shrpnes_rate = sh_sum / (max_sharpnes * 0.4f);
 	
 	return shrpnes_rate * contrast_rate;
 }

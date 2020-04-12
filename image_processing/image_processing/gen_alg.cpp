@@ -1,4 +1,6 @@
-#include <iostream>
+
+std::vector<int> image_windows;
+std::wstring gen_log;
 
 //  code
 unsigned int grayencode(unsigned int g)
@@ -106,17 +108,28 @@ struct image_bread
 template <typename bread, size_t size>
 void image_bread_print(const small::array<bread, size>& generation, float* fitnes_value)
 {
+	wchar_t buf[32];
 	for (int i = 0; i < size; i++)
 	{
 		for (int cr = 0; cr < 2; cr++)
 		{
 			for (int j = 0; j < 3; j++)
-				output("%d  ", (int)generation[i].chromo[cr][j]);
+			{
+				swprintf_s(buf, L"%d  ", (int)generation[i].chromo[cr][j]);
+				gen_log += buf;
+				output(buf);
+			}
 
-			output("\n");
+			swprintf_s(buf, L"\r\n");
+			gen_log += buf;
+			output(buf);
+
 		}
 
-		output("%.4f \n\n", fitnes_value[i]);
+		swprintf_s(buf, L"%.4f \r\n\r\n", fitnes_value[i]);
+		gen_log += buf;
+		output(buf);
+
 	}
 }
 
@@ -239,7 +252,10 @@ std::tuple<small::array<bread, size>, int> gen_alg(const small::array<bread, siz
 
 	while (time < steps)
 	{
-		output("step %d ==============\n", time);
+		wchar_t buf[32];
+		swprintf_s(buf, L"step %d ==============\r\n", time);
+		output(buf);
+		gen_log += buf;
 
 		// make new population
 		auto [ret_step, finish] = evolution(step);
@@ -247,7 +263,7 @@ std::tuple<small::array<bread, size>, int> gen_alg(const small::array<bread, siz
 		if (finish >= 0) return { step, finish };
 		
 		if (show_step)
-			image_window(step[0].apply());
+			image_windows.push_back(image_window(step[0].apply()));
 
 		time++;
 	}

@@ -52,7 +52,7 @@ struct Component
 	HWND parent;
 
 	Component() : id(global_id++) {}
-	~Component() { components_remove(parent, handle); DestroyWindow(handle); }
+	virtual ~Component() { DestroyWindow(handle); }// components_remove(parent, handle);}
 
 	void resize(RECT& rect)
 	{
@@ -127,6 +127,9 @@ struct Component_crt
 		auto pointer = std::find_if(components.begin(), components.end(), [&parent](const std::pair<HWND, std::vector<Component*>>& elem) {return elem.first == parent;});
 		if (pointer == components.end()) return;
 
+		for (auto comp : pointer->second)
+			comp->~Component();
+
 		components.erase(pointer);
 	}
 
@@ -192,7 +195,12 @@ struct HWND_constainer
 	void remove(int id)
 	{
 		auto handle = std::find_if(handles.begin(), handles.end(), [id](std::pair<int, HWND> in) {return in.first == id; });
+		if (handle == handles.end()) return;
+
+		// clear the space
 		arguments.remove(handle->second);
+		components.remove(handle->second);
+		
 		DestroyWindow(handle->second);
 		handles.erase(handle);
 		// no one active window
@@ -346,7 +354,17 @@ struct Window
 		SendMessage(handle, WM_PAINT, 0, 0);
 	}
 
-	virtual ~Window() { components.remove(handle); handles.remove(class_id); }
+	virtual ~Window() { handles.remove(class_id); }
+
+	void close()
+	{
+		SendMessage(handle, WM_CLOSE, 0, 0);
+	}
+
+	static void close(int id)
+	{
+		SendMessage(handles[id], WM_CLOSE, 0, 0);
+	}
 
 	void render_canvas()
 	{
@@ -772,7 +790,7 @@ struct Text : Component
 		components.add(parent, this);
 	}
 
-	TCHAR* getText()
+	TCHAR* get_text()
 	{
 		int nLength = GetWindowTextLength(handle);
 		if (nLength > 0)
@@ -789,7 +807,7 @@ struct Text : Component
 		return NULL;
 	}
 
-	void SetText(TCHAR* text)
+	void set_text(const TCHAR* text)
 	{
 		SetWindowText(handle, text);
 	}
@@ -933,7 +951,7 @@ struct Table : Component
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
-				data.push_back(table[i * cols + j].getText());
+				data.push_back(table[i * cols + j].get_text());
 
 		return data;
 	}
