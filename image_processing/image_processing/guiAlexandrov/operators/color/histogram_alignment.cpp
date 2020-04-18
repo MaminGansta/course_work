@@ -56,9 +56,9 @@ Image_type hist_alignment(const Image_type& image)
 	Image_type res;
 	res.resize(image.width, image.height);
 
-	uint32_t cdf[256];
-	uint32_t cdf_min;
-	uint32_t count = 0;
+	int cdf[256];
+	int cdf_min;
+	int count = 0;
 
 	cdf[0] = hist.cbrightness[0];
 	for (int i = 1; i < 256; i++)
@@ -86,7 +86,7 @@ Image_type hist_alignment(const Image_type& image)
 		float V = 0.615f * pixel.r - 0.5586f * pixel.g - 0.0563 * pixel.b;
 
 		// corection
-		Y = float(cdf[int(Y * 255.0f)] - cdf_min) / (count - 1);
+		Y = float(MAX(cdf[int(Y * 255.0f)] - cdf_min, 0)) / (count - 1);
 
 		temp.r = chanel_clip(Y + 1.2803f * V);
 		temp.g = chanel_clip(Y - 0.2148f * U - 0.4805f * V);

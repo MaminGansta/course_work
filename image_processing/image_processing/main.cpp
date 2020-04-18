@@ -9,6 +9,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	al_init(hInstance);
 
 	new Show_window();
+
 	
 	Window::wait_msg_proc();
 	return 0;
