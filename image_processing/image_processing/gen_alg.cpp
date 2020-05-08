@@ -117,18 +117,18 @@ void image_bread_print(const small::array<bread, size>& generation, float* fitne
 			{
 				swprintf_s(buf, L"%d  ", (int)generation[i].chromo[cr][j]);
 				gen_log += buf;
-				output(buf);
+				doutput(buf);
 			}
 
 			swprintf_s(buf, L"\r\n");
 			gen_log += buf;
-			output(buf);
+			doutput(buf);
 
 		}
 
 		swprintf_s(buf, L"%.4f \r\n\r\n", fitnes_value[i]);
 		gen_log += buf;
-		output(buf);
+		doutput(buf);
 
 	}
 }
@@ -254,7 +254,7 @@ std::tuple<small::array<bread, size>, int> gen_alg(const small::array<bread, siz
 	{
 		wchar_t buf[32];
 		swprintf_s(buf, L"step %d ==============\r\n", time);
-		output(buf);
+		doutput(buf);
 		gen_log += buf;
 
 		// make new population

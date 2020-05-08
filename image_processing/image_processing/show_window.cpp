@@ -1,6 +1,6 @@
 struct Show_window : Window
 {
-	Image image;
+	fImage image;
 
 	Button bLoad;
 	Button bGo;
